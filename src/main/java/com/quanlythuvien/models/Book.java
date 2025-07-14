@@ -19,6 +19,7 @@ public class Book {
     private StringProperty language;
     private StringProperty state;
     private StringProperty location;
+    private BooleanProperty selected;
 
     public Book(int id, String name, String author, String category, Date publicDate, int quantity, String language, String state, String location) {
         this.id = new SimpleIntegerProperty(id);
@@ -32,35 +33,39 @@ public class Book {
         this.location = new SimpleStringProperty(location);
     }
     
-    public Book(int id, String name){
+    public Book(int id, String name) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
+        this.selected = new SimpleBooleanProperty(false);
     }
-
-    public int getId() { return id.get(); }
-    public IntegerProperty idProperty() { return id; }
+     
+    public int getId() { return this.id.get(); }
+    public void setId(int id) { this.id.set(id); }
 
     public String getName() { return name.get(); }
-    public StringProperty nameProperty() { return name; }
+    public void setName(String name) { this.name.set(name); }
 
     public String getAuthor() { return author.get(); }
-    public StringProperty authorProperty() { return author; }
+    public void setAuthor(String author) { this.author.set(author); }
 
-    public String getCategory() { return category.get(); }
-    public StringProperty categoryProperty() { return category; }
-
+    public String getCategory() { return category.get(); } 
+    public void setCategory(String category) { this.category.set(category); }
+    
     public Date getPublicDate() { return publicDate.get(); }
-    public ObjectProperty<Date> publicDateProperty() { return publicDate; }
+    public void setPublicDate(Date publicDate) { this.publicDate.set(publicDate); }
 
     public int getQuantity() { return quantity.get(); }
-    public IntegerProperty quantityProperty() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity.set(quantity); }
 
     public String getLanguage() { return language.get(); }
-    public StringProperty languageProperty() { return language; }
+    public void setLanguage(String language) { this.language.set(language); }
 
     public String getState() { return state.get(); }
-    public StringProperty stateProperty() { return state; }
-
+    public void setState(String state) { this.state.set(state); }
+    
     public String getLocation() { return location.get(); }
-    public StringProperty locationProperty() { return location; }
+    public void setLocation(String location) { this.location.set(location); }
+    
+    public boolean isSelected() { return selected.get(); }
+    public void setSelected(boolean selected) { this.selected.set(selected); }
 }

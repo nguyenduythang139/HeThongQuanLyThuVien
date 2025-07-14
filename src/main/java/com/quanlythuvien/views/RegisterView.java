@@ -18,7 +18,7 @@ import javafx.stage.Stage;
  */
 public class RegisterView {
     public void start(Stage stage){
-         //vboxleft
+        // vboxleft
         Label welcomeTitle = new Label("Đăng ký thôi!");
         welcomeTitle.setStyle("-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;");
         Label welcomeDescribe = new Label("Nếu bạn đã có tài khoản, hãy\nđăng nhập vào hệ thống!");
@@ -37,7 +37,7 @@ public class RegisterView {
         vboxLeft.setStyle("-fx-background-color: linear-gradient(to bottom, #0E6C42, #1D774E);");
         vboxLeft.setPrefWidth(260);
 
-         //vbox right
+        // vbox right
         Label signInTitle = new Label("Đăng Ký");
         signInTitle.setStyle("-fx-font-size: 20px; -fx-text-fill: #00927A; -fx-font-weight: bold;");
 

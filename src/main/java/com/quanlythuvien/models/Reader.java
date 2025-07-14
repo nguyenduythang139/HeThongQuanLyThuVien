@@ -33,29 +33,29 @@ public class Reader {
     }
 
    public int getId(){ return id.get(); }
-   public IntegerProperty idProperty() { return id; }
+   public void setId(int id) { this.id.set(id); }
     
    public String getName(){ return name.get(); }
-   public StringProperty nameProperty() { return name; }
+   public void setName(String name) { this.name.set(name); }
    
    public String getGender(){ return gender.get(); }
-   public StringProperty genderProperty() { return gender; }
+   public void setGender(String gender) { this.gender.set(gender); }
    
    public Date getBirthDate(){ return birthDate.get(); }
-   public ObjectProperty<Date> birthDateProperty() { return birthDate; }
+   public void setBirthDate(Date birthDate) { this.birthDate.set(birthDate); }
    
    public String getCCCD(){ return cccd.get(); }
-   public StringProperty cccdProperty() { return cccd; }
+   public void setCCCD(String cccd) { this.cccd.set(cccd); }
    
    public String getPhoneNumber(){ return phoneNumber.get(); }
-   public StringProperty phoneNumberProperty() { return phoneNumber; }
+   public void setPhoneNumber(String phoneNumber) { this.phoneNumber.set(phoneNumber); }
    
    public String getEmail(){ return email.get(); }
-   public StringProperty emailProperty() { return email; }
+   public void setEmail(String email) { this.email.set(email); }
    
    public String getAddress(){ return address.get(); }
-   public StringProperty addressProperty() { return address; }
+   public void setAddress(String address) { this.address.set(address); }
    
    public String getStatus(){ return status.get(); }
-   public StringProperty statusProperty() { return status; }
+   public void setStatus(String status) { this.status.set(status); }
 }

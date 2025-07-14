@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class LoginView {
     public void start(Stage stage) {
-         //vboxleft
+        // vboxleft
         Label welcomeTitle = new Label("Xin chào!");
         welcomeTitle.setStyle("-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;");
         Label welcomeDescribe = new Label("Chào mừng bạn đã đến với hệ thống\nquản lý thư viện của chúng tôi");
@@ -29,7 +29,7 @@ public class LoginView {
         vboxLeft.setStyle("-fx-background-color: linear-gradient(to bottom, #0E6C42, #1D774E);");
         vboxLeft.setPrefWidth(260);
 
-         //vbox right
+        // vbox right
         Label signInTitle = new Label("Đăng Nhập");
         signInTitle.setStyle("-fx-font-size: 20px; -fx-text-fill: #00927A; -fx-font-weight: bold;");
 

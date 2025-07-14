@@ -16,20 +16,21 @@ import javafx.scene.text.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.quanlythuvien.models.Book;
-import javafx.beans.property.SimpleObjectProperty;
 import com.quanlythuvien.utils.menuBarComponent;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
  * @author admin
  */
-public class ManageBookView {
+public class ManageBookView {   
     public void start(Stage stage) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
         // Thanh menu
         VBox menuBar = menuBarComponent.createMenuBar(stage);
 
-        // Form nhap thong tin sach
+        // Form them sach
         Label lbTitle = new Label("📖 Quản Lý Sách");
         lbTitle.setFont(Font.font(20));
         lbTitle.setStyle("-fx-text-fill: #1D774E;");
@@ -69,11 +70,11 @@ public class ManageBookView {
         VBox vbPublicDate = new VBox(3, lbPublicDate, dpPublicDate);
         
         Label lbQuantity = new Label("Số lượng");
-        Spinner<Integer> spQuantity = new Spinner<>(1, 1000, 10);
-        spQuantity.setPromptText("Nhập số lượng");
-        spQuantity.setPrefWidth(300);
-        spQuantity.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
-        VBox vbQuantity = new VBox(3, lbQuantity, spQuantity);
+        TextField tfQuantity = new TextField();
+        tfQuantity.setPromptText("Nhập số lượng");
+        tfQuantity.setPrefWidth(300);
+        tfQuantity.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
+        VBox vbQuantity = new VBox(3, lbQuantity, tfQuantity);
 
         Label lbLanguage = new Label("Ngôn ngữ:");
         ComboBox<String> cbLanguage = new ComboBox<>();
@@ -109,7 +110,8 @@ public class ManageBookView {
         buttonBox1.setAlignment(Pos.CENTER);
         buttonBox2.setAlignment(Pos.CENTER);
 
-        Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
         VBox formBox = new VBox(10,
                 lbTitle,
                 vbBookName, vbAuthor, vbPublisher, vbCategory, vbPublicDate, vbQuantity, vbLanguage, vbState, vbLocation,
@@ -117,7 +119,7 @@ public class ManageBookView {
         );
         formBox.setPadding(new Insets(20));
         formBox.setPrefWidth(300);
-        formBox.setPrefHeight(screenSize.getHeight());
+        formBox.setPrefHeight(bounds.getHeight());
         formBox.setStyle("-fx-background-color: #F8F8F8; -fx-border-color: #ccc;");
         formBox.setMargin(buttonBox1, new Insets(30, 0, 0, 0));
         
@@ -126,8 +128,9 @@ public class ManageBookView {
         formScrollPane.setFitToWidth(true);
         
         // Bang hien thi danh sach sach
-        TableView<Book> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableView<Book> tbvBook = new TableView<>();
+        tbvBook.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tbvBook.setPlaceholder(new Label("Không có dữ liệu!"));
 
         TableColumn<Book, Integer> colId = new TableColumn<>("Mã sách");
         TableColumn<Book, String> colName = new TableColumn<>("Tên sách");
@@ -139,50 +142,23 @@ public class ManageBookView {
         TableColumn<Book, String> colState = new TableColumn<>("Trạng thái");
         TableColumn<Book, String> colLocation = new TableColumn<>("Vị trí");
         
-        hoverColumn(colAuthor);
-        hoverColumn(colCategory);
-        hoverColumn(colPublicDate);
-        hoverColumn(colQuantity);
-        hoverColumn(colName);
-
-        colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
-        colName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        colAuthor.setCellValueFactory(cellData -> cellData.getValue().authorProperty());
-        colCategory.setCellValueFactory(cellData -> cellData.getValue().categoryProperty());
-        colPublicDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPublicDate())); 
-        formatDateColumn(colPublicDate, "dd/MM/yyyy");
-        colQuantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
-        colLanguage.setCellValueFactory(cellData -> cellData.getValue().languageProperty());
-        colState.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-        colLocation.setCellValueFactory(cellData -> cellData.getValue().locationProperty());
+        tbvBook.getColumns().addAll(colId, colName, colAuthor, colCategory, colPublicDate, colQuantity, colLanguage, colState, colLocation);
         
-     
-
-        table.getColumns().addAll(colId, colName, colAuthor, colCategory, colPublicDate, colQuantity, colLanguage, colState, colLocation);
-        ObservableList<Book> books = FXCollections.observableArrayList(
-            new Book(1, "Lập trình Java", "Nguyễn Văn A", "Giáo trình", new Date(), 10, "Tiếng Việt", "Còn hàng", "Kệ A1"),
-            new Book(2, "Doraemon", "Fujiko F. Fujio", "Truyện tranh", new Date(), 20, "Tiếng Việt", "Còn hàng", "Kệ B2"),
-            new Book(3, "Clean Code", "Robert C. Martin", "Khoa học", new Date(), 5, "Tiếng Anh", "Hết hàng", "Kệ C3"),
-            new Book(4, "Toán Cao Cấp", "Trần Văn B", "Giáo trình", new Date(), 12, "Tiếng Việt", "Còn hàng", "Kệ D4"),
-            new Book(5, "Sherlock Holmes", "Arthur Conan Doyle", "Tiểu thuyết", new Date(), 8, "Tiếng Anh", "Còn hàng", "Kệ E5")
-        );
-
-        table.setItems(books);
+        
 
         // Thanh tim kiem
         TextField tfSearch = new TextField();
         tfSearch.setPromptText("🔍 Tìm kiếm sách theo tên...");
         tfSearch.setPrefWidth(300);
 
-        VBox tableBox = new VBox(10, tfSearch, table);
+        VBox tableBox = new VBox(10, tfSearch, tbvBook);
         tableBox.setPadding(new Insets(20));
-        HBox.setHgrow(tableBox, Priority.ALWAYS);
 
         // Layout chinh
         HBox mainContent = new HBox(formScrollPane, tableBox);
         BorderPane masterLayout = new BorderPane(mainContent, null, null, null, menuBar);
 
-        Scene scene = new Scene(masterLayout, screenSize.getWidth(), screenSize.getHeight()-30);
+        Scene scene = new Scene(masterLayout, bounds.getWidth(), bounds.getHeight()-30);
         stage.setTitle("Quản lý sách");
         stage.setScene(scene);
         stage.show();
@@ -193,33 +169,5 @@ public class ManageBookView {
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white;");
         btn.setPrefWidth(100);
         return btn;
-    }
-    
-    private <T> void hoverColumn(TableColumn<Book, T> column) {
-        column.setCellFactory(col -> new TableCell<Book, T>() {
-            @Override
-            protected void updateItem(T item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setTooltip(null);
-                } else {
-                    String text = item.toString();
-                    setText(text);
-                    setTooltip(new Tooltip(text));
-                }
-            }
-        });
-    }
-    
-     public static <S> void formatDateColumn(TableColumn<S, Date> column, String pattern) {
-        column.setCellFactory(col -> new TableCell<S, Date>() {
-            private final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-            @Override
-            protected void updateItem(Date item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : sdf.format(item));
-            }
-        });
     }
 }

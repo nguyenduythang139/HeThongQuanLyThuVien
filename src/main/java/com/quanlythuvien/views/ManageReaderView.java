@@ -4,8 +4,6 @@
  */
 package com.quanlythuvien.views;
 import java.util.Date;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -15,11 +13,9 @@ import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import com.quanlythuvien.models.Book;
 import com.quanlythuvien.models.Reader;
-import javafx.beans.property.SimpleObjectProperty;
 import com.quanlythuvien.utils.menuBarComponent;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -27,10 +23,12 @@ import java.text.SimpleDateFormat;
  */
 public class ManageReaderView {
     public void start(Stage stage) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            
         // Thanh menu
         VBox menuBar = menuBarComponent.createMenuBar(stage);
 
-        // Form nhap thong doc gia
+        // Form them doc gia
         Label lbTitle = new Label("👥 Quản Lý Độc Giả");
         lbTitle.setFont(Font.font(20));
         lbTitle.setStyle("-fx-text-fill: #1D774E;");
@@ -100,7 +98,8 @@ public class ManageReaderView {
         buttonBox1.setAlignment(Pos.CENTER);
         buttonBox2.setAlignment(Pos.CENTER);
 
-        Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
         VBox formBox = new VBox(10,
                 lbTitle,
                 vbReaderName, vbReaderGender, vbBirthDate, vbReaderCCCD, vbReaderPhone, vbReaderEmail, vbReaderAddress, vbReaderStatus,
@@ -108,17 +107,17 @@ public class ManageReaderView {
         );
         formBox.setPadding(new Insets(20));
         formBox.setPrefWidth(300);
-        formBox.setPrefHeight(screenSize.getHeight());
+        formBox.setPrefHeight(bounds.getHeight());
         formBox.setStyle("-fx-background-color: #F8F8F8; -fx-border-color: #ccc;");
         formBox.setMargin(buttonBox1, new Insets(30, 0, 0, 0));
         
-        ScrollPane formScrollPane = new ScrollPane();
-        formScrollPane.setContent(formBox);
+        ScrollPane formScrollPane = new ScrollPane(formBox);
         formScrollPane.setFitToWidth(true);
         
         // Bang hien thi danh sach doc gia
-        TableView<Reader> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableView<Reader> tbvReader = new TableView<>();
+        tbvReader.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tbvReader.setPlaceholder(new Label("Không có dữ liệu!"));
 
         TableColumn<Reader, Integer> colId = new TableColumn<>("Mã độc giả");
         colId.setStyle("-fx-alignment: center");
@@ -130,38 +129,16 @@ public class ManageReaderView {
         TableColumn<Reader, String> colPhoneNumber = new TableColumn<>("Số điện thoại");
         TableColumn<Reader, String> colEmail = new TableColumn<>("Email");
         TableColumn<Reader, String> colAddress = new TableColumn<>("Địa chỉ");
-        TableColumn<Reader, String> colStatus = new TableColumn<>("Trạng thái");
-        
-        hoverColumn(colName);
+        TableColumn<Reader, String> colStatus = new TableColumn<>("Trạng thái");           
 
-        colId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
-        colName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        colGender.setCellValueFactory(cellData -> cellData.getValue().genderProperty());
-        colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBirthDate()));
-        formatDateColumn(colBirthDate, "dd/MM/yyyy");
-        colCCCD.setCellValueFactory(cellData -> cellData.getValue().cccdProperty());
-        colPhoneNumber.setCellValueFactory(cellData -> cellData.getValue().phoneNumberProperty());
-        colEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
-        colAddress.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
-        colStatus.setCellValueFactory(cellData -> cellData.getValue().statusProperty());      
-
-        table.getColumns().addAll(colId, colName, colGender, colBirthDate, colCCCD, colPhoneNumber, colEmail, colAddress, colStatus);
-        ObservableList<Reader> readers = FXCollections.observableArrayList(
-            new Reader(1, "Nguyễn Văn A", "Nam", new Date(90, 4, 15), "012312312398", "0912345678", "a.nguyen@gmail.com", "Hà Nội", "Đang hoạt động"),
-            new Reader(2, "Trần Thị B", "Nữ", new Date(95, 7, 22), "012312126798", "0987654321", "b.tran@yahoo.com", "TP. HCM", "Bị khóa"),
-            new Reader(3, "Lê Văn C", "Nam", new Date(88, 1, 5), "012376092398", "0932123456", "c.le@outlook.com", "Đà Nẵng", "Đang hoạt động"),
-            new Reader(4, "Phạm Thị D", "Nữ", new Date(99, 10, 10), "012309828398", "0945678910", "d.pham@gmail.com", "Cần Thơ", "Đang hoạt động"),
-            new Reader(5, "Hoàng Văn E", "Nam", new Date(85, 3, 30), "012319876398", "0909988776", "e.hoang@gmail.com", "Hải Phòng", "Bị khóa")
-        );
-
-        table.setItems(readers);
+        tbvReader.getColumns().addAll(colId, colName, colGender, colBirthDate, colCCCD, colPhoneNumber, colEmail, colAddress, colStatus);
 
         // Thanh tim kiem
         TextField tfSearch = new TextField();
         tfSearch.setPromptText("🔍 Tìm kiếm độc giả theo mã hoặc tên");
         tfSearch.setPrefWidth(300);
 
-        VBox tableBox = new VBox(10, tfSearch, table);
+        VBox tableBox = new VBox(10, tfSearch, tbvReader);
         tableBox.setPadding(new Insets(20));
         HBox.setHgrow(tableBox, Priority.ALWAYS);
 
@@ -169,7 +146,7 @@ public class ManageReaderView {
         HBox mainContent = new HBox(formScrollPane, tableBox);
         BorderPane masterLayout = new BorderPane(mainContent, null, null, null, menuBar);
 
-        Scene scene = new Scene(masterLayout, screenSize.getWidth(), screenSize.getHeight()-30);
+        Scene scene = new Scene(masterLayout, bounds.getWidth(), bounds.getHeight()-30);
         stage.setTitle("Quản lý sách");
         stage.setScene(scene);
         stage.show();
@@ -180,33 +157,5 @@ public class ManageReaderView {
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white;");
         btn.setPrefWidth(100);
         return btn;
-    }
-    
-    private <T> void hoverColumn(TableColumn<Reader, T> column) {
-        column.setCellFactory(col -> new TableCell<Reader, T>() {
-            @Override
-            protected void updateItem(T item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setTooltip(null);
-                } else {
-                    String text = item.toString();
-                    setText(text);
-                    setTooltip(new Tooltip(text));
-                }
-            }
-        });
-    }
-    
-    public static <S> void formatDateColumn(TableColumn<S, Date> column, String pattern) {
-        column.setCellFactory(col -> new TableCell<S, Date>() {
-            private final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-            @Override
-            protected void updateItem(Date item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : sdf.format(item));
-            }
-        });
     }
 }

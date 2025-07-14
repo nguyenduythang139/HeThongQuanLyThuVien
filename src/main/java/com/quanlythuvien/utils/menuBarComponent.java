@@ -7,6 +7,7 @@ package com.quanlythuvien.utils;
 import com.quanlythuvien.views.HomeView;
 import com.quanlythuvien.views.ManageBookView;
 import com.quanlythuvien.views.ManageBorrowReturnView;
+import com.quanlythuvien.views.ManageFine;
 import com.quanlythuvien.views.ManageReaderView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -62,14 +63,18 @@ public class menuBarComponent {
             ManageBorrowReturnView manageBorrowReturnView = new ManageBorrowReturnView();
             manageBorrowReturnView.start(stage);
         });
-        Button btnStatistic = menuBarButton("📊  Thống kê");
+        Button btnManageFine = menuBarButton("💸  Quản lý nộp phạt");
+        btnManageFine.setOnAction((t) -> {
+            ManageFine manageFine = new ManageFine();
+            manageFine.start(stage);
+        });
         Button btnLogout = new Button("🚪   Đăng xuất");
         
         btnLogout.setPrefWidth(180);
         btnLogout.setFont(Font.font(13));
         btnLogout.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-alignment: LEFT");
 
-        menuBar.getChildren().addAll(hbLogo, devider, btnHome, btnManageBook, btnManageReader, btnManageBorrowReturn, btnStatistic, btnLogout);
+        menuBar.getChildren().addAll(hbLogo, devider, btnHome, btnManageBook, btnManageReader, btnManageBorrowReturn, btnManageFine, btnLogout);
         menuBar.setAlignment(Pos.TOP_CENTER);
         return menuBar;
     }
