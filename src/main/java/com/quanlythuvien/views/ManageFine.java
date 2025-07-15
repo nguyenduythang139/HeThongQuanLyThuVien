@@ -25,7 +25,12 @@ public class ManageFine {
     public void start(Stage stage){
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
+        // Thanh menu
         VBox menuBar = menuBarComponent.createMenuBar(stage);
+        
+        // Bang hien thi danh sach phieu phat
+        Label lbTitle = new Label("💸 Quản lý nộp phạt");
+        lbTitle.setStyle("-fx-text-fill: #1D774E; -fx-font-size: 20");
         
         TableView<Fine> tbvFine = new TableView<>();
         tbvFine.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -89,9 +94,10 @@ public class ManageFine {
         TextField tfSearch = new TextField();
         tfSearch.setPromptText("🔍 Tìm kiếm mã phiếu phạt");
         
-        VBox mainContent = new VBox(10, tfSearch, tbvFine, btnPaid);
+        VBox mainContent = new VBox(10, lbTitle, tfSearch, tbvFine, btnPaid);
         mainContent.setPadding(new Insets(20));
         
+        // Layout chinh
         BorderPane masterLayout = new BorderPane(mainContent, null, null, null, menuBar);
         
         Screen screen = Screen.getPrimary();

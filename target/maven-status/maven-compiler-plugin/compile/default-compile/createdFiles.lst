@@ -9,7 +9,9 @@ com\quanlythuvien\views\ManageFine.class
 com\quanlythuvien\models\BorrowDetail.class
 com\quanlythuvien\models\BorrowTicket.class
 com\quanlythuvien\models\Fine.class
+com\quanlythuvien\views\ManageAccount.class
 module-info.class
+com\quanlythuvien\models\Account.class
 com\quanlythuvien\views\ManageBorrowReturnView.class
 com\quanlythuvien\App.class
 com\quanlythuvien\views\LoginView.class

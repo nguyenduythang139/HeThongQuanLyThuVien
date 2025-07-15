@@ -9,10 +9,17 @@ import java.sql.*;
  * @author admin
  */
 public class DBConnection {
-    static String url="jdbc:mysql://localhost:3306/thuvien";
-    static String user="root";
-    static String pass="root";
-    public static Connection getConnection() throws SQLException{
-        return DriverManager.getConnection(url, user, pass);
+    public static Connection getConnection(){
+        Connection conn = null;
+        try{
+            String url = "jdbc:mysql://localhost:3306/thuvien";
+            String user = "root";
+            String pass = "root";
+            return conn = DriverManager.getConnection(url, user, pass);
+        }
+        catch (Exception e){
+            System.out.println("Ket noi CSDL that bai!");
+        }
+        return conn;
     }
 }

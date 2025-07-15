@@ -51,12 +51,6 @@ public class ManageBookView {
         lbTitle.setFont(Font.font(20));
         lbTitle.setStyle("-fx-text-fill: #1D774E;");
 
-        Label lbId = new Label("Mã sách:");
-        tfId = new TextField();
-        tfId.setPromptText("Nhập mã sách");
-        tfId.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
-        VBox vbId = new VBox(3, lbId, tfId);
-        
         Label lbBookName = new Label("Tên sách:");
         tfBookName = new TextField();
         tfBookName.setPromptText("Nhập tên sách");
@@ -147,7 +141,7 @@ public class ManageBookView {
         Rectangle2D bounds = screen.getVisualBounds();
         VBox formBox = new VBox(10,
                 lbTitle,
-                vbId, vbBookName, vbAuthor, vbPublisher, vbCategory, vbPublicDate, vbQuantity, vbLanguage, vbState, vbLocation,
+                vbBookName, vbAuthor, vbPublisher, vbCategory, vbPublicDate, vbQuantity, vbLanguage, vbState, vbLocation,
                 buttonBox1, buttonBox2
         );
         //chuc nang them sach
@@ -273,7 +267,6 @@ public class ManageBookView {
     }
     public static void showItemBook(){
         Book bk = tbvBook.getSelectionModel().getSelectedItem();
-        tfId.setText(bk.getId()+"");
         tfBookName.setText(bk.getName()+"");
         tfAuthor.setText(bk.getAuthor());
         tfPublisher.setText(bk.getPublisher());
@@ -290,12 +283,12 @@ public class ManageBookView {
         Alert thongbao = new Alert(Alert.AlertType.INFORMATION);
             thongbao.setTitle("Cập nhật!!");
         try {
+            Book selectedBook = tbvBook.getSelectionModel().getSelectedItem();
             Connection conn = DBConnection.getConnection();
             if(conn != null){
                 String sql ="update sach set TenSach=?,TacGia=?,NhaXuatBan=?,TheLoai=?,NgayXuatBan=?,SoLuong=?,NgonNgu=?,TinhTrang=?,ViTriLuuTru=? where MaSach=?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 
-                ps.setInt(10, Integer.parseInt(tfId.getText()));
                 ps.setString(1, tfBookName.getText());
                 ps.setString(2, tfAuthor.getText());
                 ps.setString(3, tfPublisher.getText());
@@ -305,6 +298,7 @@ public class ManageBookView {
                 ps.setString(7, cbLanguage.getValue());
                 ps.setString(8, cbState.getValue());
                 ps.setString(9, tfLocation.getText());
+                ps.setInt(10, selectedBook.getId());
                 
                 int kq = ps.executeUpdate();
                 if(kq > 0){
@@ -328,12 +322,13 @@ public class ManageBookView {
         Alert thongbao = new Alert(Alert.AlertType.INFORMATION);
             thongbao.setTitle("Xoa sach!!");
         try {
+            Book selectedBook = tbvBook.getSelectionModel().getSelectedItem();
             Connection conn = DBConnection.getConnection();
             if(conn != null){
                 String sql ="delete from sach where MaSach=?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 
-                ps.setInt(1, Integer.parseInt(tfId.getText()));
+                ps.setInt(1, selectedBook.getId());
                 
                 int kq = ps.executeUpdate();
                 if(kq > 0){
@@ -348,12 +343,12 @@ public class ManageBookView {
                 }  
             }
         } catch (Exception e) {
-            thongbao.setContentText("Error thêm");
+            thongbao.setContentText("Error xóa");
             thongbao.show();
         }
     }
+    
     public static void Reset(){
-        tfId.clear();
         tfBookName.clear();
         tfAuthor.clear();
         tfPublisher.clear();
@@ -372,20 +367,19 @@ public class ManageBookView {
         try {
             Connection conn = DBConnection.getConnection();
             if(conn != null){
-                String sql ="insert into sach values(?,?,?,?,?,?,?,?,?,?,?)";
+                String sql ="insert into sach(TenSach, TacGia, NhaXuatBan, TheLoai, NgayXuatBan, SoLuong, NgonNgu, TinhTrang, ViTriLuuTru, HinhAnh) values(?,?,?,?,?,?,?,?,?,?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 
-                ps.setInt(1, Integer.parseInt(tfId.getText()));
-                ps.setString(2, tfBookName.getText());
-                ps.setString(3, tfAuthor.getText());
-                ps.setString(4, tfPublisher.getText());
-                ps.setString(5, cbCategory.getValue());
-                ps.setDate(6,java.sql.Date.valueOf(dpPublicDate.getValue()));
-                ps.setInt(7, Integer.parseInt(tfQuantity.getText()));
-                ps.setString(8, cbLanguage.getValue());
-                ps.setString(9, cbState.getValue());
-                ps.setString(10, tfLocation.getText());
-                ps.setString(11,"a");
+                ps.setString(1, tfBookName.getText());
+                ps.setString(2, tfAuthor.getText());
+                ps.setString(3, tfPublisher.getText());
+                ps.setString(4, cbCategory.getValue());
+                ps.setDate(5,java.sql.Date.valueOf(dpPublicDate.getValue()));
+                ps.setInt(6, Integer.parseInt(tfQuantity.getText()));
+                ps.setString(7, cbLanguage.getValue());
+                ps.setString(8, cbState.getValue());
+                ps.setString(9, tfLocation.getText());
+                ps.setString(10,null);
                 
                 int kq = ps.executeUpdate();
                 if(kq > 0){
@@ -404,6 +398,7 @@ public class ManageBookView {
             thongbao.show();
         }
     }
+    
     public static void loadDataSach(){
         try {
             Connection conn = DBConnection.getConnection();

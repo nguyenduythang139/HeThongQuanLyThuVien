@@ -5,6 +5,7 @@
 package com.quanlythuvien.utils;
 
 import com.quanlythuvien.views.HomeView;
+import com.quanlythuvien.views.ManageAccount;
 import com.quanlythuvien.views.ManageBookView;
 import com.quanlythuvien.views.ManageBorrowReturnView;
 import com.quanlythuvien.views.ManageFine;
@@ -68,13 +69,18 @@ public class menuBarComponent {
             ManageFine manageFine = new ManageFine();
             manageFine.start(stage);
         });
+        Button btnManageAccount = menuBarButton("👤  Quản lý tài khoản");
+        btnManageAccount.setOnAction((t) -> {
+            ManageAccount manageAccount = new ManageAccount();
+            manageAccount.start(stage);
+        });
         Button btnLogout = new Button("🚪   Đăng xuất");
         
         btnLogout.setPrefWidth(180);
         btnLogout.setFont(Font.font(13));
         btnLogout.setStyle("-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-alignment: LEFT");
 
-        menuBar.getChildren().addAll(hbLogo, devider, btnHome, btnManageBook, btnManageReader, btnManageBorrowReturn, btnManageFine, btnLogout);
+        menuBar.getChildren().addAll(hbLogo, devider, btnHome, btnManageBook, btnManageReader, btnManageBorrowReturn, btnManageFine, btnManageAccount, btnLogout);
         menuBar.setAlignment(Pos.TOP_CENTER);
         return menuBar;
     }
