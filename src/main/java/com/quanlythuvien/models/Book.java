@@ -13,6 +13,7 @@ public class Book {
     private IntegerProperty id;
     private StringProperty name;
     private StringProperty author;
+    private StringProperty publisher;
     private StringProperty category;
     private ObjectProperty<Date> publicDate;
     private IntegerProperty quantity;
@@ -21,10 +22,11 @@ public class Book {
     private StringProperty location;
     private BooleanProperty selected;
 
-    public Book(int id, String name, String author, String category, Date publicDate, int quantity, String language, String state, String location) {
+    public Book(int id, String name, String author, String publisher,String category, Date publicDate, int quantity, String language, String state, String location) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
         this.author = new SimpleStringProperty(author);
+        this.publisher = new SimpleStringProperty(publisher);
         this.category = new SimpleStringProperty(category);
         this.publicDate = new SimpleObjectProperty<>(publicDate);
         this.quantity = new SimpleIntegerProperty(quantity);
@@ -47,6 +49,9 @@ public class Book {
 
     public String getAuthor() { return author.get(); }
     public void setAuthor(String author) { this.author.set(author); }
+    
+    public String getPublisher() {return publisher.get();}
+    public void setPublisher(String publisher) {this.publisher.set(publisher);}
 
     public String getCategory() { return category.get(); } 
     public void setCategory(String category) { this.category.set(category); }
