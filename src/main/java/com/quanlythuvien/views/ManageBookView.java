@@ -4,6 +4,7 @@
  */
 package com.quanlythuvien.views;
 import com.quanlythuvien.database.DBConnection;
+import com.quanlythuvien.models.Account;
 import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,16 +19,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.quanlythuvien.models.Book;
 import com.quanlythuvien.utils.menuBarComponent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;              
-import java.sql.Statement;
-import java.time.chrono.JapaneseEra;
+import java.sql.*;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.geometry.Dimension2D;
+
 
 /**
  *
@@ -35,7 +30,7 @@ import javafx.geometry.Dimension2D;
  */
 public class ManageBookView {   
     private static Button btnThem, btnXoa, btnCapNhat, btnReset;
-    private static TextField tfId,tfBookName,tfAuthor,tfPublisher,tfQuantity,tfLocation;
+    private static TextField tfId,tfBookName,tfAuthor,tfPublisher,tfQuantity,tfLocation, tfSearch;
     private static ComboBox<String> cbCategory,cbLanguage,cbState;
     private static DatePicker dpPublicDate;
     private static ObservableList<Book> dataSach = FXCollections.observableArrayList();
@@ -102,7 +97,7 @@ public class ManageBookView {
         
         Label lbState = new Label("Tình trạng:");
         cbState = new ComboBox<>();
-        cbState.getItems().addAll("Con", "Het");
+        cbState.getItems().addAll("Còn", "Hết");
         cbState.setPromptText("Chọn tình trạng");
         cbState.setPrefWidth(300);
         cbState.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
@@ -119,15 +114,15 @@ public class ManageBookView {
                 btnThem = new Button("Thêm"),
                 btnCapNhat = new Button("Cập nhật")             
         );  
-        btnThem.setStyle("-fx-background-color:#1E56A0");
-        btnCapNhat.setStyle("-fx-background-color:#2E8B57");
+        btnThem.setStyle("-fx-background-color:#1E56A0; -fx-text-fill: white;");
+        btnCapNhat.setStyle("-fx-background-color:#2E8B57; -fx-text-fill: white;");
         
         HBox buttonBox2 = new HBox(20, 
                 btnXoa = new Button("Xoá"),
                 btnReset = new Button("Reset")
         );
-        btnXoa.setStyle("-fx-background-color:#B22222");
-        btnReset.setStyle("-fx-backgroung-color:#6A5ACD");
+        btnXoa.setStyle("-fx-background-color:#B22222; -fx-text-fill: white;");
+        btnReset.setStyle("-fx-background-color:#6A5ACD; -fx-text-fill: white;");
         
         btnThem.setPrefSize(120,30);
         btnCapNhat.setPrefSize(120,30);
@@ -179,6 +174,7 @@ public class ManageBookView {
         tbvBook.setPlaceholder(new Label("Không có dữ liệu!"));
 
         TableColumn<Book, Integer> colId = new TableColumn<>("Mã sách");
+        colId.setStyle("-fx-alignment:center");
         colId.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             int MaSach = bk.getId();
@@ -216,6 +212,7 @@ public class ManageBookView {
             return new ReadOnlyObjectWrapper<>(NgayXuatBan);
         });
         TableColumn<Book, Integer> colQuantity = new TableColumn<>("Số lượng");
+        colQuantity.setStyle("-fx-alignment:center");
         colQuantity.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             int SoLuong = bk.getQuantity();
@@ -228,6 +225,7 @@ public class ManageBookView {
             return new ReadOnlyObjectWrapper<>(NgonNgu);
         });
         TableColumn<Book, String> colState = new TableColumn<>("Trạng thái");
+        colState.setStyle("-fx-alignment:center");
         colState.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String TinhTrang = bk.getState();
@@ -248,9 +246,10 @@ public class ManageBookView {
         });
 
         // Thanh tim kiem
-        TextField tfSearch = new TextField();
+        tfSearch = new TextField();
         tfSearch.setPromptText("🔍 Tìm kiếm sách theo tên...");
         tfSearch.setPrefWidth(300);
+        tfSearch.setOnAction(t -> searchBook());
 
         VBox tableBox = new VBox(10, tfSearch, tbvBook);
         tableBox.setPadding(new Insets(20));
@@ -422,6 +421,45 @@ public class ManageBookView {
             }
             tbvBook.setItems(dataSach);
         } catch (Exception e) {
+        }
+    }
+    
+    private static void searchBook() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        String keyword = tfSearch.getText().trim();
+        try {
+            Connection conn = DBConnection.getConnection();
+            String sql = "SELECT * FROM sach WHERE MaSach LIKE ? OR TenSach LIKE ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String likeKeyword = "%" + keyword + "%";
+            ps.setString(1, likeKeyword);
+            ps.setString(2, likeKeyword);
+            ResultSet rs = ps.executeQuery();
+
+            ObservableList<Book> lstSearch = FXCollections.observableArrayList();
+            while (rs.next()) {
+                Book book = new Book(
+                    rs.getInt("MaSach"),
+                    rs.getString("TenSach"),
+                    rs.getString("TacGia"),
+                    rs.getString("NhaXuatBan"),
+                    rs.getString("TheLoai"),
+                    rs.getDate("NgayXuatBan"),
+                    rs.getInt("SoLuong"),
+                    rs.getString("NgonNgu"),
+                    rs.getString("TinhTrang"),
+                    rs.getString("ViTriLuuTru")           
+                );
+                lstSearch.add(book);
+            }
+            tbvBook.setItems(lstSearch);
+            if (lstSearch.isEmpty()) {
+                alert.setTitle("Kết quả tìm kiếm");
+                alert.setContentText("Không tìm thấy sách!"); 
+                alert.show();
+            }
+        } catch (Exception e) {
+            System.out.println("Lỗi tìm kiếm!");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.quanlythuvien.views;
 
+import com.quanlythuvien.models.CurrentAccount;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -14,8 +15,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.quanlythuvien.utils.menuBarComponent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-public class HomeView {
+public class HomeView{
+    private static CurrentAccount currentAccount = new CurrentAccount();
     public void start(Stage stage) {
         // Thanh menu
         VBox menuBar = menuBarComponent.createMenuBar(stage);
@@ -37,7 +41,13 @@ public class HomeView {
         cardsSection.setPadding(new Insets(30, 10, 20, 10));
 
         // Lời chào và thời gian
-        Label welcome = new Label("👋 Xin chào, Thủ thư Nguyễn Duy Thắng");
+        Label welcome = new Label();
+        if (currentAccount.getRole().equals("Admin")){
+            welcome.setText("👋 Xin chào, Admin");
+        }
+        else{
+            welcome.setText("👋 Xin chào, thủ thư " + currentAccount.getUserName());
+        }
         welcome.setFont(Font.font(16));
         welcome.setTextFill(Color.web("#2C3E50"));
         Label time = new Label("📆 Hôm nay: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -46,6 +56,10 @@ public class HomeView {
         VBox greeting = new VBox(5, welcome, time);
         greeting.setAlignment(Pos.CENTER_LEFT);
         greeting.setPadding(new Insets(0, 0, 10, 30));
+        
+        /*ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/images/homepage_image.png")));
+        imageView.setFitWidth(400);
+        imageView.setFitHeight(300);*/
 
         VBox mainContent = new VBox(greeting, cardsSection);
         mainContent.setStyle("-fx-background-color: white;");

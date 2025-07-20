@@ -19,9 +19,10 @@ public class Account {
     private ObjectProperty<Date> birthDate;
     private StringProperty gender;
     private IntegerProperty status;
+    private StringProperty role;
     
     public Account(int id, String userName, String passWord, String email, 
-            Date birthDate, String gender, int status){
+            Date birthDate, String gender, int status, String role){
         this.id = new SimpleIntegerProperty(id);
         this.userName = new SimpleStringProperty(userName);
         this.passWord = new SimpleStringProperty(passWord);
@@ -29,6 +30,7 @@ public class Account {
         this.birthDate = new SimpleObjectProperty<>(birthDate);
         this.gender = new SimpleStringProperty(gender);
         this.status = new SimpleIntegerProperty(status);
+        this.role = new SimpleStringProperty(role);
     }
     
     public int getId() { return this.id.get(); }
@@ -51,4 +53,7 @@ public class Account {
         
     public int getStatus() { return this.status.get(); }
     public void setStatus(int status) { this.status.set(status); }
+    
+    public String getRole() { return this.role.get(); }
+    public void setRole(String role) { this.role.set(role); }
 }

@@ -4,7 +4,9 @@
  */
 package com.quanlythuvien.utils;
 
+import com.quanlythuvien.models.CurrentAccount;
 import com.quanlythuvien.views.HomeView;
+import com.quanlythuvien.views.LoginView;
 import com.quanlythuvien.views.ManageAccount;
 import com.quanlythuvien.views.ManageBookView;
 import com.quanlythuvien.views.ManageBorrowReturnView;
@@ -26,6 +28,7 @@ import javafx.stage.Stage;
  * @author admin
  */
 public class menuBarComponent {
+    private static CurrentAccount currentAccount = new CurrentAccount();
     public static VBox createMenuBar(Stage stage) {
         VBox menuBar = new VBox(20);
         menuBar.setPadding(new Insets(20));
@@ -70,11 +73,20 @@ public class menuBarComponent {
             manageFine.start(stage);
         });
         Button btnManageAccount = menuBarButton("👤  Quản lý tài khoản");
-        btnManageAccount.setOnAction((t) -> {
-            ManageAccount manageAccount = new ManageAccount();
-            manageAccount.start(stage);
-        });
+        if (currentAccount.getRole().equals("Admin"))
+        {
+            btnManageAccount.setOnAction((t) -> {
+                ManageAccount manageAccount = new ManageAccount();
+                manageAccount.start(stage);
+            });
+        }
+       
         Button btnLogout = new Button("🚪   Đăng xuất");
+        btnLogout.setOnAction((t) -> {
+            LoginView loginView = new LoginView();
+            loginView.start(stage);
+            currentAccount.cleanAccount();
+        });
         
         btnLogout.setPrefWidth(180);
         btnLogout.setFont(Font.font(13));

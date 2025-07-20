@@ -6,7 +6,7 @@ com\quanlythuvien\views\ManageReaderView.class
 com\quanlythuvien\views\HomeView.class
 com\quanlythuvien\models\Reader.class
 com\quanlythuvien\views\ManageFine.class
-com\quanlythuvien\models\BorrowDetail.class
+com\quanlythuvien\models\CurrentAccount.class
 com\quanlythuvien\models\BorrowTicket.class
 com\quanlythuvien\models\Fine.class
 com\quanlythuvien\views\ManageAccount.class

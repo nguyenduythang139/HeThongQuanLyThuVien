@@ -73,4 +73,5 @@ public class Book {
     
     public boolean isSelected() { return selected.get(); }
     public void setSelected(boolean selected) { this.selected.set(selected); }
+    public BooleanProperty selectedProperty() { return selected; }
 }

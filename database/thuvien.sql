@@ -39,6 +39,7 @@ CREATE TABLE `chitietphieumuon` (
 
 LOCK TABLES `chitietphieumuon` WRITE;
 /*!40000 ALTER TABLE `chitietphieumuon` DISABLE KEYS */;
+INSERT INTO `chitietphieumuon` VALUES (1,2,1),(2,2,1),(2,3,1),(2,4,1);
 /*!40000 ALTER TABLE `chitietphieumuon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -60,7 +61,7 @@ CREATE TABLE `docgia` (
   `DiaChi` varchar(255) DEFAULT NULL,
   `TrangThai` enum('Hoạt động','Bị khóa') DEFAULT 'Hoạt động',
   PRIMARY KEY (`MaDocGia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,6 +70,7 @@ CREATE TABLE `docgia` (
 
 LOCK TABLES `docgia` WRITE;
 /*!40000 ALTER TABLE `docgia` DISABLE KEYS */;
+INSERT INTO `docgia` VALUES (1,'Nguyen Van A','Nam','2004-09-13','1231231231','022334455666','nguyenvana@gmail.com','312 Quang Trung, Gò Vấp, TPHCM','Hoạt động'),(3,'Nguyen Van B','Nam','2004-09-08','1321321231','0336971705','nguyenvanb@gmail.com','312 Phan Văn Trị, Gò Vấp, TPHCM','Hoạt động');
 /*!40000 ALTER TABLE `docgia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +92,7 @@ CREATE TABLE `phieumuon` (
   PRIMARY KEY (`MaPhieuMuon`),
   KEY `MaDocGia` (`MaDocGia`),
   CONSTRAINT `phieumuon_ibfk_1` FOREIGN KEY (`MaDocGia`) REFERENCES `docgia` (`MaDocGia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,6 +101,7 @@ CREATE TABLE `phieumuon` (
 
 LOCK TABLES `phieumuon` WRITE;
 /*!40000 ALTER TABLE `phieumuon` DISABLE KEYS */;
+INSERT INTO `phieumuon` VALUES (1,1,'2025-07-20','2025-07-22',NULL,'Đang mượn','abc'),(2,3,'2025-07-20','2025-07-23',NULL,'Đang mượn','abc');
 /*!40000 ALTER TABLE `phieumuon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,12 +114,13 @@ DROP TABLE IF EXISTS `phieuphat`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `phieuphat` (
   `MaPhieuPhat` int NOT NULL AUTO_INCREMENT,
-  `MaPhieuMuon` int NOT NULL,
-  `LyDoPhat` varchar(255) DEFAULT NULL,
+  `MaPhieuMuon` int DEFAULT NULL,
+  `NgayPhat` datetime DEFAULT CURRENT_TIMESTAMP,
   `SoNgayTre` int DEFAULT '0',
-  `MucPhat` decimal(10,2) DEFAULT NULL,
-  `DaDong` tinyint(1) DEFAULT '0',
-  `GhiChu` text,
+  `TienPhatTre` int DEFAULT '0',
+  `SoSachHong` int DEFAULT '0',
+  `TienPhatHong` int DEFAULT '0',
+  `TongTienPhat` int DEFAULT '0',
   PRIMARY KEY (`MaPhieuPhat`),
   KEY `MaPhieuMuon` (`MaPhieuMuon`),
   CONSTRAINT `phieuphat_ibfk_1` FOREIGN KEY (`MaPhieuMuon`) REFERENCES `phieumuon` (`MaPhieuMuon`)
@@ -152,7 +156,7 @@ CREATE TABLE `sach` (
   `ViTriLuuTru` varchar(100) DEFAULT NULL,
   `HinhAnh` text,
   PRIMARY KEY (`MaSach`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,6 +165,7 @@ CREATE TABLE `sach` (
 
 LOCK TABLES `sach` WRITE;
 /*!40000 ALTER TABLE `sach` DISABLE KEYS */;
+INSERT INTO `sach` VALUES (2,'abcd','abc','abc','Giao Trinh','2025-07-10',-1,'Tieng Viet','Còn','1',NULL),(3,'sách 2','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(4,'sách 3','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(5,'sách 4','abc','abc','Giao Trinh','2025-07-10',1,'Tieng Viet','Còn','1',NULL);
 /*!40000 ALTER TABLE `sach` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,13 +180,14 @@ CREATE TABLE `taikhoan` (
   `MaTK` int NOT NULL AUTO_INCREMENT,
   `TenDangNhap` varchar(50) NOT NULL,
   `MatKhau` varchar(100) NOT NULL,
+  `VaiTro` enum('Admin','ThuThu') DEFAULT 'ThuThu',
   `Email` varchar(50) DEFAULT NULL,
   `NgaySinh` date DEFAULT NULL,
   `GioiTinh` enum('Nam','Nữ') DEFAULT NULL,
   `TrangThai` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`MaTK`),
   UNIQUE KEY `TenDangNhap` (`TenDangNhap`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,6 +196,7 @@ CREATE TABLE `taikhoan` (
 
 LOCK TABLES `taikhoan` WRITE;
 /*!40000 ALTER TABLE `taikhoan` DISABLE KEYS */;
+INSERT INTO `taikhoan` VALUES (1,'nguyenvana','12345678','ThuThu','nguyenvana@gmail.com','2004-09-13','Nam',1),(3,'nguyenvanb','12345678','ThuThu','nguyenvanb@gmail.com','2005-10-01','Nữ',1),(5,'nguyenvanc','12345678','ThuThu','nguyenvanc@gmail.com','2025-07-01','Nam',1),(6,'nguyenvand','12345678','ThuThu','nguyenvand@gmail.com','2019-05-09','Nữ',1),(7,'nguyenvane','12345678','ThuThu','nguyenvane@gmail.com','2016-06-29','Nam',1),(8,'nguyenduyf','12345678','ThuThu','nguyenduyf@gmail.com','2022-07-07','Nam',1),(9,'admin','123456','Admin','nguyenduythang1392004@gmail.com','2004-09-13','Nam',1);
 /*!40000 ALTER TABLE `taikhoan` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -202,4 +209,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-14 18:43:46
+-- Dump completed on 2025-07-20 17:31:12

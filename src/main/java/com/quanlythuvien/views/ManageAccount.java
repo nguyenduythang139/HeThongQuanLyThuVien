@@ -6,6 +6,7 @@ package com.quanlythuvien.views;
 
 import com.quanlythuvien.database.DBConnection;
 import com.quanlythuvien.models.Account;
+import com.quanlythuvien.models.Reader;
 import com.quanlythuvien.utils.menuBarComponent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,9 +33,9 @@ import javafx.stage.Stage;
 public class ManageAccount {
     private static TableView<Account> tbvAccount;
     private static ObservableList<Account> lstAccount = FXCollections.observableArrayList();
-    private static TextField tfUserName, tfPassWord, tfEmail;
+    private static TextField tfUserName, tfPassWord, tfEmail, tfSearch;
     private static DatePicker dpBirthDate;
-    private static ComboBox<String> cbGender, cbStatus;
+    private static ComboBox<String> cbGender, cbStatus, cbRole;
     public void start (Stage stage){
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
@@ -85,6 +86,14 @@ public class ManageAccount {
         cbStatus.setValue("Đang hoạt động");
         VBox vbStatus = new VBox(3, lbStatus, cbStatus);
         
+        Label lbRole = new Label("Vai trò:");
+        cbRole = new ComboBox<>();
+        cbRole.getItems().addAll("Admin", "ThuThu");
+        cbRole.setPromptText("Chọn vai trò");
+        cbRole.setPrefWidth(300);
+        cbRole.setValue("ThuThu");
+        VBox vbRole = new VBox(3, lbRole, cbRole);
+        
         // Nut them xoa sua reset
         Button btnCreate = createActionButton("Thêm", "#1E56A0");
         Button btnUpdate = createActionButton("Cập nhật", "#2E8B57");
@@ -106,7 +115,7 @@ public class ManageAccount {
         VBox formBox = new VBox(10, 
                                 lbTitle,
                                 vbUserName, vbPassword, vbEmail, vbBirthDate,
-                                vbGender, vbStatus, buttonBox1, buttonBox2);
+                                vbGender, vbStatus, vbRole, buttonBox1, buttonBox2);
         formBox.setPadding(new Insets(20));
         formBox.setPrefWidth(300);
         formBox.setPrefHeight(bounds.getHeight());
@@ -123,12 +132,16 @@ public class ManageAccount {
         tbvAccount.setPlaceholder(new Label("Không có dữ liệu!"));
         
         TableColumn<Account, Integer> colAccountId = new TableColumn<>("Mã tài khoản");
+        colAccountId.setStyle("-fx-alignment:center");
         TableColumn<Account, String> colUserName = new TableColumn<>("Tên đăng nhập");
         TableColumn<Account, String> colPassWord = new TableColumn<>("Mật khẩu");
         TableColumn<Account, String> colEmail = new TableColumn<>("Email");
         TableColumn<Account, Object> colBirthDate = new TableColumn<>("Ngày sinh");
         TableColumn<Account, String> colGender = new TableColumn<>("Giới tính");
+        colGender.setStyle("-fx-alignment:center");
         TableColumn<Account, String> colStatus = new TableColumn<>("Trạng thái");
+        TableColumn<Account, String> colRole = new TableColumn<>("Vai trò");
+        colRole.setStyle("-fx-alignment:center");
         
         colAccountId.setCellValueFactory((p) -> {
             Account account = p.getValue();
@@ -172,14 +185,21 @@ public class ManageAccount {
             return new ReadOnlyObjectWrapper<>(status);
         });
         
-        tbvAccount.getColumns().addAll(colAccountId, colUserName, colPassWord, colEmail, colBirthDate, colGender, colStatus);
+        colRole.setCellValueFactory((p) -> {
+            Account account = p.getValue();
+            String role = account.getRole();
+            return new ReadOnlyObjectWrapper<>(role);
+        });
+        
+        tbvAccount.getColumns().addAll(colAccountId, colUserName, colPassWord, colEmail, colBirthDate, colGender, colStatus, colRole);
         loadDataAccount();
         tbvAccount.setOnMouseClicked(t -> showSelectedItem());
         
         // Thanh tim kiem
-        TextField tfSearch = new TextField();
-        tfSearch.setPromptText("🔍 Tìm kiếm tài khoản theo tên...");
+        tfSearch = new TextField();
+        tfSearch.setPromptText("🔍 Tìm kiếm tài khoản theo mã hoặc tên ...");
         tfSearch.setPrefWidth(300);
+        tfSearch.setOnAction(t -> searchAccount());
         
         VBox tableBox = new VBox(10, tfSearch, tbvAccount);
         tableBox.setPadding(new Insets(20));
@@ -219,14 +239,15 @@ public class ManageAccount {
                             rs.getString("Email"),
                             rs.getDate("NgaySinh"),
                             rs.getString("GioiTinh"),
-                            rs.getInt("TrangThai")
+                            rs.getInt("TrangThai"),
+                            rs.getString("VaiTro")
                     ));
                 }
                 tbvAccount.setItems(lstAccount);
             }
         }
         catch(Exception e){
-            alert.setContentText("Load dữ liệu lỗi!");
+            alert.setContentText("Lỗi!");
             alert.show();
         }
     }
@@ -248,6 +269,7 @@ public class ManageAccount {
         dpBirthDate.setValue(new java.sql.Date(selectedAccount.getBirthDate().getTime()).toLocalDate());
         cbGender.setValue(selectedAccount.getGender());
         cbStatus.setValue(selectedAccount.getStatus() == 1 ? "Đang hoạt động" : "Đã khóa" );
+        cbRole.setValue(selectedAccount.getRole());
     }
     
     private static void createAccount(){
@@ -256,14 +278,15 @@ public class ManageAccount {
         try{
             Connection conn = DBConnection.getConnection();
             if (conn != null){
-                String sql = "insert into taikhoan(TenDangNhap, MatKhau, Email, NgaySinh, GioiTinh, TrangThai) values(?,?,?,?,?,?)";
+                String sql = "insert into taikhoan(TenDangNhap, MatKhau, VaiTro, Email, NgaySinh, GioiTinh, TrangThai) values(?,?,?,?,?,?,?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, tfUserName.getText());
                 ps.setString(2, tfPassWord.getText());
-                ps.setString(3, tfEmail.getText());
-                ps.setDate(4, java.sql.Date.valueOf(dpBirthDate.getValue()));
-                ps.setString(5, cbGender.getValue());
-                ps.setInt(6, cbStatus.getValue().equals("Đang hoạt động") ? 1 : 0);
+                ps.setString(3, cbRole.getValue());
+                ps.setString(4, tfEmail.getText());
+                ps.setDate(5, java.sql.Date.valueOf(dpBirthDate.getValue()));
+                ps.setString(6, cbGender.getValue());
+                ps.setInt(7, cbStatus.getValue().equals("Đang hoạt động") ? 1 : 0);
                 int kq = ps.executeUpdate();
                 if (kq > 0){
                     alert.setContentText("Thêm thành công!");
@@ -277,7 +300,7 @@ public class ManageAccount {
             }
         }
         catch(Exception e){
-            alert.setContentText("Lỗi thêm!");
+            alert.setContentText("Lỗi!");
             alert.show();
         }
     }
@@ -289,15 +312,16 @@ public class ManageAccount {
             Account selectedAccount = tbvAccount.getSelectionModel().getSelectedItem();
             Connection conn = DBConnection.getConnection();
             if (conn != null){
-                String sql = "update taikhoan set TenDangNhap = ?, MatKhau = ?, Email = ?, NgaySinh = ?, GioiTinh = ?, TrangThai = ? where MaTK = ?";
+                String sql = "update taikhoan set TenDangNhap = ?, MatKhau = ?, VaiTro = ?, Email = ?, NgaySinh = ?, GioiTinh = ?, TrangThai = ? where MaTK = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, tfUserName.getText());
                 ps.setString(2, tfPassWord.getText());
-                ps.setString(3, tfEmail.getText());
-                ps.setDate(4, java.sql.Date.valueOf(dpBirthDate.getValue()));
-                ps.setString(5, cbGender.getValue());
-                ps.setInt(6, cbStatus.getValue().equals("Đang hoạt động") ? 1 : 0);
-                ps.setInt(7, selectedAccount.getId());
+                ps.setString(3, cbRole.getValue());
+                ps.setString(4, tfEmail.getText());
+                ps.setDate(5, java.sql.Date.valueOf(dpBirthDate.getValue()));
+                ps.setString(6, cbGender.getValue());
+                ps.setInt(7, cbStatus.getValue().equals("Đang hoạt động") ? 1 : 0);
+                ps.setInt(8, selectedAccount.getId());
                 int kq = ps.executeUpdate();
                 if (kq > 0){
                     alert.setContentText("Cập nhật thành công!");
@@ -311,7 +335,7 @@ public class ManageAccount {
             }
         }
         catch(Exception e){
-            alert.setContentText("Lỗi cập nhật!");
+            alert.setContentText("Lỗi!");
             alert.show();
         }
     }
@@ -339,8 +363,45 @@ public class ManageAccount {
             }
         }
         catch(Exception e){
-            alert.setContentText("Lỗi xóa");
+            alert.setContentText("Lỗi!");
             alert.show();
+        }
+    }
+    
+    private static void searchAccount() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        String keyword = tfSearch.getText().trim();
+        try {
+            Connection conn = DBConnection.getConnection();
+            String sql = "SELECT * FROM taikhoan WHERE MaTK LIKE ? OR TenDangNhap LIKE ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String likeKeyword = "%" + keyword + "%";
+            ps.setString(1, likeKeyword);
+            ps.setString(2, likeKeyword);
+            ResultSet rs = ps.executeQuery();
+
+            ObservableList<Account> lstSearch = FXCollections.observableArrayList();
+            while (rs.next()) {
+                Account account = new Account(
+                    rs.getInt("MaTK"),
+                    rs.getString("TenDangNhap"),
+                    rs.getString("MatKhau"),
+                    rs.getString("Email"),
+                    rs.getDate("NgaySinh"),
+                    rs.getString("GioiTinh"),
+                    rs.getInt("TrangThai"),
+                    rs.getString("VaiTro")
+                );
+                lstSearch.add(account);
+            }
+            tbvAccount.setItems(lstSearch);
+            if (lstSearch.isEmpty()) {
+                alert.setTitle("Kết quả tìm kiếm");
+                alert.setContentText("Không tìm thấy tài khoản!");
+                alert.show();
+            }
+        } catch (Exception e) {
+            System.out.println("Lỗi tìm kiếm!");
         }
     }
 }

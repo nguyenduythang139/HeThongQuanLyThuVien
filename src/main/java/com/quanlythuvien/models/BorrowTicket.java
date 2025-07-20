@@ -5,32 +5,27 @@
 package com.quanlythuvien.models;
 import javafx.beans.property.*;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 /**
  *
  * @author admin
  */
 public class BorrowTicket {
-    private final IntegerProperty ticketId;
-    private final IntegerProperty readerId;
-    private final ObjectProperty<Date> borrowDate;
-    private final ObjectProperty<Date> returnDate;
-    private final ObjectProperty<Date> actualReturnDate;
-    private final StringProperty note;
-    private final StringProperty status;
-    private final List<BorrowDetail> borrowDetail;
-    
+    private IntegerProperty ticketId;
+    private IntegerProperty readerId;
+    private ObjectProperty<Date> borrowDate;
+    private ObjectProperty<Date> returnDate;
+    private ObjectProperty<Date> actualReturnDate;
+    private StringProperty note;
+    private StringProperty status;
 
-    public BorrowTicket(int ticketId, int readerId, Date borrowDate, Date returnDate, String note, List<BorrowDetail> borrowDetail) {
+    public BorrowTicket(int ticketId, int readerId, Date borrowDate, Date returnDate, Date actualReturnDate, String status, String note) {
         this.ticketId = new SimpleIntegerProperty(ticketId);
         this.readerId = new SimpleIntegerProperty(readerId);
         this.borrowDate = new SimpleObjectProperty<>(borrowDate);
         this.returnDate = new SimpleObjectProperty<>(returnDate);
-        this.actualReturnDate = new SimpleObjectProperty<>(null); 
+        this.actualReturnDate = new SimpleObjectProperty<>(actualReturnDate); 
+        this.status = new SimpleStringProperty(status);
         this.note = new SimpleStringProperty(note);
-        this.status = new SimpleStringProperty("Đang mượn");
-        this.borrowDetail = borrowDetail;
     }
 
     public int getTicketId() { return ticketId.get(); }
@@ -53,17 +48,6 @@ public class BorrowTicket {
     
     public String getStatus() { return status.get(); }
     public void setStatus(String status) { this.status.set(status); }
-
-    public List<BorrowDetail> getBorrowDetail() { return borrowDetail; }
-    
-    public String getBookName(){
-        StringBuilder bookNames = new StringBuilder();
-        for (BorrowDetail bd : borrowDetail){
-            if (bookNames.length() > 0) bookNames.append(", ");
-            bookNames.append(bd.getBookName());
-        }
-        return bookNames.toString();
-    }
 }
 
 

@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.quanlythuvien.views;
+import com.quanlythuvien.database.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +20,11 @@ import javafx.stage.Stage;
  * @author admin
  */
 public class RegisterView {
+    private static TextField tfUsername, tfEmail, tfConfirm; 
+    private static PasswordField tfPassword;
+    private static DatePicker dpBirthDate;
+    private static ToggleGroup genderGroup;
+    private static RadioButton rdNam, rdNu;
     public void start(Stage stage){
         // vboxleft
         Label welcomeTitle = new Label("Đăng ký thôi!");
@@ -43,7 +51,7 @@ public class RegisterView {
 
         Label lbUsername = new Label("Tên đăng nhập: ");
         lbUsername.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        TextField tfUsername = new TextField();
+        tfUsername = new TextField();
         tfUsername.setPromptText("Nhập tên đăng nhập ...");
         tfUsername.setMaxWidth(250);
         tfUsername.setPrefHeight(30);
@@ -51,7 +59,7 @@ public class RegisterView {
         
         Label lbEmail = new Label("Email: ");
         lbEmail.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        TextField tfEmail = new TextField();
+        tfEmail = new TextField();
         tfEmail.setPromptText("Nhập Email ...");
         tfEmail.setMaxWidth(250);
         tfEmail.setPrefHeight(30);
@@ -59,14 +67,14 @@ public class RegisterView {
         
         Label lbBirthDate = new Label("Ngày sinh: ");
         lbBirthDate.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        DatePicker dpBirthDate = new DatePicker();
+        dpBirthDate = new DatePicker();
         dpBirthDate.setPromptText("Nhập ngày sinh ...");
         dpBirthDate.setMaxWidth(250);
         VBox vbBirthDate = new VBox(5, lbBirthDate, dpBirthDate);
 
         Label lbPassword = new Label("Mật khẩu: ");
         lbPassword.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        PasswordField tfPassword = new PasswordField();
+        tfPassword = new PasswordField();
         tfPassword.setPromptText("Nhập mật khẩu ...");
         tfPassword.setMaxWidth(250);
         tfPassword.setPrefHeight(30);
@@ -74,7 +82,7 @@ public class RegisterView {
         
         Label lbConfirm = new Label("Xác thực mật khẩu: ");
         lbConfirm.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        PasswordField tfConfirm = new PasswordField();
+        tfConfirm = new PasswordField();
         tfConfirm.setPromptText("Nhập lại mật khẩu ...");
         tfConfirm.setMaxWidth(250);
         tfConfirm.setPrefHeight(30);
@@ -82,9 +90,9 @@ public class RegisterView {
         
         Label lbGender = new Label("Chọn giới tính:");
         lbGender.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        ToggleGroup genderGroup = new ToggleGroup();
-        RadioButton rdNam = new RadioButton("Nam");
-        RadioButton rdNu = new RadioButton("Nữ");
+        genderGroup = new ToggleGroup();
+        rdNam = new RadioButton("Nam");
+        rdNu = new RadioButton("Nữ");
         HBox hbGender = new HBox(10, rdNam, rdNu);
         VBox vbGender = new VBox(5, lbGender, hbGender);
         rdNam.setToggleGroup(genderGroup);
@@ -101,22 +109,42 @@ public class RegisterView {
         btnSignUp.setOnAction((t) -> {
             String username = tfUsername.getText();
             String email = tfEmail.getText();
-            LocalDate date = dpBirthDate.getValue();
-            String birthdate = date.toString();
+            LocalDate birthdate = dpBirthDate.getValue();
             String password = tfPassword.getText();
             String confirm = tfConfirm.getText();
             String gender = "";
-            Toggle selectedToggle = genderGroup.getSelectedToggle();           
-            if (selectedToggle != null){
-                RadioButton selectedRadio = (RadioButton) selectedToggle;
+            if (genderGroup.getSelectedToggle() != null)
+            {
+                RadioButton selectedRadio = (RadioButton) genderGroup.getSelectedToggle();
                 gender = selectedRadio.getText();
-            }
+            }   
             if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty() || birthdate == null || gender.isEmpty()){
-                showAlert("Lỗi","Vui lòng đầy đủ các trường thông tin!");
+                showAlert("Lỗi đăng ký","Vui lòng nhập đầy đủ các trường thông tin!");
+                return;
+            }
+            if (checkUserName()){
+                showAlert("Lỗi đăng ký", "Tên đăng nhập đã được sử dụng!");
+            }
+            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+                showAlert("Lỗi đăng ký", "Vui lòng nhập email hợp lệ!");
+                return;
+            }
+            if (birthdate.isAfter(LocalDate.now())){    
+                showAlert("Lỗi đăng ký", "Vui lòng chọn ngày sinh hợp lệ!");
+                return;
+            }
+            if (password.length() < 8){
+                showAlert("Lỗi đăng ký", "Vui lòng nhập mật khẩu > 8 ký tự!");
+                return;
             }
             if (!password.equals(confirm)){
-                showAlert("Lỗi","Xác thực mật khẩu không khớp mật khẩu!");
+                showAlert("Lỗi đăng ký","Xác thực mật khẩu không khớp mật khẩu!");
+                return;
             }
+            showAlert("Đăng ký tài khoản", "Đăng ký tài khoản thành công!");
+            registerAccount();
+            LoginView loginView = new LoginView();
+            loginView.start(stage);
         });
         
         VBox vboxRight = new VBox(10, signInTitle, vbUsername, vbEmail, vbBirthDate, vbPassword, vbConfirm, vbGender, btnSignUp);
@@ -135,10 +163,56 @@ public class RegisterView {
         stage.show();
     }
     
-    private void showAlert(String title, String msg) {
+    private static void registerAccount(){
+        try{
+            Connection conn = DBConnection.getConnection();
+            if(conn != null){
+                String sql = "insert into taikhoan(TenDangNhap, MatKhau, Email, NgaySinh, GioiTinh, TrangThai) values(?,?,?,?,?,?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, tfUsername.getText());
+                ps.setString(2, tfPassword.getText());
+                ps.setString(3, tfEmail.getText());
+                ps.setDate(4, java.sql.Date.valueOf(dpBirthDate.getValue()));
+                RadioButton selectedRadio = (RadioButton) genderGroup.getSelectedToggle();
+                ps.setString(5, selectedRadio.getText());
+                ps.setInt(6, 1);
+                
+                int kq = ps.executeUpdate();
+                if (kq > 0){
+                    showAlert("Thêm thành công", "Đăng ký thành công tài khoản quản trị");
+                }
+                else{
+                    showAlert("Thêm thất bại", "Đăng ký thất bại tài khoản quản trị");
+                }
+            }
+        }
+        catch(Exception e){
+            showAlert("Lỗi", "Lỗi đăng ký");
+        }
+    }
+    
+    private static boolean checkUserName(){
+        try{
+            Connection conn = DBConnection.getConnection();
+            if (conn != null){
+                String sql = "select * from taikhoan where TenDangNhap = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, tfUsername.getText());
+                if (ps.executeQuery().next()){
+                    return true;
+                }
+            }
+        }
+        catch(Exception e){
+            showAlert("Lỗi", "Lỗi đăng ký!");
+        }
+        return false;
+    }
+    
+    private static void showAlert(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(msg);
-        alert.showAndWait();
+        alert.show();
     }
 }

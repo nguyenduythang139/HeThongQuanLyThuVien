@@ -1,5 +1,11 @@
 package com.quanlythuvien.views;
 
+import com.quanlythuvien.database.DBConnection;
+import com.quanlythuvien.models.CurrentAccount;
+import com.quanlythuvien.views.HomeView;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,6 +15,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class LoginView {
+    private static TextField tfUsername;
+    private static PasswordField tfPassword;
     public void start(Stage stage) {
         // vboxleft
         Label welcomeTitle = new Label("Xin chào!");
@@ -35,7 +43,7 @@ public class LoginView {
 
         Label lbUsername = new Label("Tên đăng nhập: ");
         lbUsername.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        TextField tfUsername = new TextField();
+        tfUsername = new TextField();
         tfUsername.setPromptText("Nhập tên đăng nhập ...");
         tfUsername.setMaxWidth(250);
         tfUsername.setPrefHeight(30);
@@ -43,7 +51,7 @@ public class LoginView {
 
         Label lbPassword = new Label("Mật khẩu: ");
         lbPassword.setStyle("-fx-font-size: 12px, -fx-font-weight: bold; -fx-text-fill: #000000");
-        PasswordField tfPassword = new PasswordField();
+        tfPassword = new PasswordField();
         tfPassword.setPromptText("Nhập mật khẩu ...");
         tfPassword.setMaxWidth(250);
         tfPassword.setPrefHeight(30);
@@ -55,14 +63,12 @@ public class LoginView {
         btnSignIn.setOnAction((t) -> {
             String username = tfUsername.getText();
             String password = tfPassword.getText();
-            if (username.equals("admin") && password.equals("123456")){
-                showAlert("Thành công", "Đăng nhập thành công vào hệ thống!");
-                HomeView homeView = new HomeView();
-                homeView.start(stage);
+            if (username.isEmpty() || password.isEmpty())
+            {
+                showAlert("Lỗi đăng nhập", "Vui lòng nhập đầy đủ các trường thông tin!");
+                return;
             }
-            else{
-                showAlert("Thất bại", "Vui lòng kiểm tra lại tên đăng nhập hoặc mật khẩu!");
-            }
+            loginAccount(stage);
         });
         
         VBox vboxRight = new VBox(10, signInTitle, vbUsername, vbPassword, btnSignIn);
@@ -80,8 +86,39 @@ public class LoginView {
         stage.setTitle("Hệ Thống Quản Lý Thư Viện - Đăng Nhập");
         stage.show();
     }
+    
+    private static void loginAccount(Stage stage){
+        try{
+            Connection conn = DBConnection.getConnection();
+            if(conn != null){
+                String sql = "select * from taikhoan where TenDangNhap = ? and MatKhau = ? and TrangThai = 1";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, tfUsername.getText());
+                ps.setString(2, tfPassword.getText());
+                if (ps.executeQuery().next())
+                {
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()){
+                        CurrentAccount currentAccount = new CurrentAccount();
+                        currentAccount.setId(rs.getInt("MaTK"));
+                        currentAccount.setUserName(rs.getString("TenDangNhap"));
+                        currentAccount.setRole(rs.getString("VaiTro"));                     
+                    }
+                    showAlert("Đăng nhập tài khoản", "Đăng nhập thành công!");
+                    HomeView homeView = new HomeView();
+                    homeView.start(stage);
+                }
+                else{
+                    showAlert("Đăng nhập tài khoản", "Tên đăng nhập hoặc mật khẩu không đúng!");
+                }
+            }
+        }
+        catch(Exception e){
+            showAlert("Lỗi","Lỗi đăng nhập!");
+        }
+    }
 
-    private void showAlert(String title, String msg) {
+    private static void showAlert(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(msg);
