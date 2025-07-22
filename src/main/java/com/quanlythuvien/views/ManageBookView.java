@@ -22,6 +22,8 @@ import com.quanlythuvien.utils.menuBarComponent;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 /**
@@ -30,7 +32,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
  */
 public class ManageBookView {   
     private static Button btnThem, btnXoa, btnCapNhat, btnReset;
-    private static TextField tfId,tfBookName,tfAuthor,tfPublisher,tfQuantity,tfLocation, tfSearch;
+    private static TextField tfId,tfBookName,tfAuthor,tfPublisher,tfQuantity,tfLocation, tfImage, tfSearch;
     private static ComboBox<String> cbCategory,cbLanguage,cbState;
     private static DatePicker dpPublicDate;
     private static ObservableList<Book> dataSach = FXCollections.observableArrayList();
@@ -108,7 +110,13 @@ public class ManageBookView {
         tfLocation.setPromptText("Nhập vị trí lưu trữ");
         tfLocation.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
         VBox vbLocation = new VBox(3, lbLocation, tfLocation);
-
+        
+        Label lblImage = new Label("Hình ảnh");
+        tfImage = new TextField();
+        tfImage.setPromptText("Nhập tên hình ảnh");
+        tfImage.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: #D5D5D5; -fx-border-radius: 4; -fx-prompt-text-fill: grey;");
+        VBox vbImage = new VBox(3, lblImage, tfImage);
+        
         // Nut them xoa sua reset
         HBox buttonBox1 = new HBox(20,
                 btnThem = new Button("Thêm"),
@@ -136,7 +144,7 @@ public class ManageBookView {
         Rectangle2D bounds = screen.getVisualBounds();
         VBox formBox = new VBox(10,
                 lbTitle,
-                vbBookName, vbAuthor, vbPublisher, vbCategory, vbPublicDate, vbQuantity, vbLanguage, vbState, vbLocation,
+                vbBookName, vbAuthor, vbPublisher, vbCategory, vbPublicDate, vbQuantity, vbLanguage, vbState, vbLocation,vbImage,
                 buttonBox1, buttonBox2
         );
         //chuc nang them sach
@@ -174,7 +182,7 @@ public class ManageBookView {
         tbvBook.setPlaceholder(new Label("Không có dữ liệu!"));
 
         TableColumn<Book, Integer> colId = new TableColumn<>("Mã sách");
-        colId.setStyle("-fx-alignment:center");
+        colId.setStyle("-fx-alignment: CENTER");
         colId.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             int MaSach = bk.getId();
@@ -182,30 +190,36 @@ public class ManageBookView {
         });
         
         TableColumn<Book, String> colName = new TableColumn<>("Tên sách");
+        colName.setStyle("-fx-alignment: CENTER;");
         colName.setCellValueFactory((p) -> {
+            
             Book bk = p.getValue();
             String TenSach = bk.getName();
             return new ReadOnlyObjectWrapper<>(TenSach);
         });
         TableColumn<Book, String> colAuthor = new TableColumn<>("Tác giả");
+        colAuthor.setStyle("-fx-alignment: CENTER;");
         colAuthor.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String TacGia = bk.getAuthor();
             return new ReadOnlyObjectWrapper<>(TacGia);
         });
         TableColumn<Book, String> colPublisher = new TableColumn<>("Nhà xuất bản"); 
+        colPublisher.setStyle("-fx-alignment: CENTER;");
         colPublisher.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String NhaXuatBan = bk.getPublisher();
             return new ReadOnlyObjectWrapper<>(NhaXuatBan);
         });
         TableColumn<Book, String> colCategory = new TableColumn<>("Thể loại");
+        colCategory.setStyle("-fx-alignment: CENTER;");
         colCategory.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String TheLoai = bk.getCategory();
             return new ReadOnlyObjectWrapper<>(TheLoai);
         });
         TableColumn<Book, Date> colPublicDate = new TableColumn<>("Ngày");
+        colPublicDate.setStyle("-fx-alignment: CENTER;");
         colPublicDate.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             Date NgayXuatBan = bk.getPublicDate();
@@ -219,6 +233,7 @@ public class ManageBookView {
             return new ReadOnlyObjectWrapper<>(SoLuong);
         });
         TableColumn<Book, String> colLanguage = new TableColumn<>("Ngôn ngữ");
+        colLanguage.setStyle("-fx-alignment: CENTER;");
         colLanguage.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String NgonNgu = bk.getLanguage();
@@ -232,14 +247,30 @@ public class ManageBookView {
             return new ReadOnlyObjectWrapper<>(TinhTrang);
         });
         TableColumn<Book, String> colLocation = new TableColumn<>("Vị trí");
+        colLocation.setStyle("-fx-alignment: CENTER;");
         colLocation.setCellValueFactory((p) -> {
             Book bk = p.getValue();
             String ViTriLuuTru = bk.getLocation();
             return new ReadOnlyObjectWrapper<>(ViTriLuuTru);
         });
+        TableColumn<Book, ImageView> colImage = new TableColumn<>("Hình ảnh");
+        colImage.setStyle("-fx-alignment: CENTER;");
+        colImage.setCellValueFactory((p) -> {
+        Book bk = p.getValue();
+        try {
+            String imagePath = "/Images/" + bk.getImage();
+            return new ReadOnlyObjectWrapper<>(
+                new ImageView (new Image(getClass().getResourceAsStream(imagePath), 120, 140, true, true))
+                
+            );
+        } catch (Exception e) {
+            return new ReadOnlyObjectWrapper<>(new ImageView()); 
+        }
+    });
+
         
         loadDataSach();
-        tbvBook.getColumns().addAll(colId, colName, colAuthor, colPublisher,colCategory, colPublicDate, colQuantity, colLanguage, colState, colLocation);
+        tbvBook.getColumns().addAll(colId, colName, colAuthor, colPublisher,colCategory, colPublicDate, colQuantity, colLanguage, colState, colLocation, colImage);
         
         tbvBook.setOnMouseClicked((t) -> {
             showItemBook();
@@ -252,7 +283,8 @@ public class ManageBookView {
         tfSearch.setOnAction(t -> searchBook());
 
         VBox tableBox = new VBox(10, tfSearch, tbvBook);
-        tableBox.setPadding(new Insets(20));
+        tableBox.setPrefWidth(1000);
+        tableBox.setPadding(new Insets(20,0,20,20));
 
         
         // Layout chinh
@@ -275,6 +307,7 @@ public class ManageBookView {
         cbLanguage.setValue(bk.getLanguage());
         cbState.setValue(bk.getState());
         tfLocation.setText(bk.getLocation());
+        tfImage.setText(bk.getImage()+"");
         
     }
     
@@ -285,7 +318,7 @@ public class ManageBookView {
             Book selectedBook = tbvBook.getSelectionModel().getSelectedItem();
             Connection conn = DBConnection.getConnection();
             if(conn != null){
-                String sql ="update sach set TenSach=?,TacGia=?,NhaXuatBan=?,TheLoai=?,NgayXuatBan=?,SoLuong=?,NgonNgu=?,TinhTrang=?,ViTriLuuTru=? where MaSach=?";
+                String sql ="update sach set TenSach=?,TacGia=?,NhaXuatBan=?,TheLoai=?,NgayXuatBan=?,SoLuong=?,NgonNgu=?,TinhTrang=?,ViTriLuuTru=?, HinhAnh=? where MaSach=?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 
                 ps.setString(1, tfBookName.getText());
@@ -297,8 +330,8 @@ public class ManageBookView {
                 ps.setString(7, cbLanguage.getValue());
                 ps.setString(8, cbState.getValue());
                 ps.setString(9, tfLocation.getText());
-                ps.setInt(10, selectedBook.getId());
-                
+                ps.setString(10, tfImage.getText());
+                ps.setInt(11, selectedBook.getId());
                 int kq = ps.executeUpdate();
                 if(kq > 0){
                     thongbao.setContentText("Cập nhật thành công");
@@ -353,6 +386,7 @@ public class ManageBookView {
         tfPublisher.clear();
         tfQuantity.clear();
         tfLocation.clear();
+        tfImage.clear();
 
         cbCategory.setValue(null);
         cbLanguage.setValue(null);
@@ -378,7 +412,7 @@ public class ManageBookView {
                 ps.setString(7, cbLanguage.getValue());
                 ps.setString(8, cbState.getValue());
                 ps.setString(9, tfLocation.getText());
-                ps.setString(10,null);
+                ps.setString(10,tfImage.getText());
                 
                 int kq = ps.executeUpdate();
                 if(kq > 0){
@@ -416,7 +450,8 @@ public class ManageBookView {
                         rs.getInt("SoLuong"),
                         rs.getString("NgonNgu"),
                         rs.getString("TinhTrang"),
-                        rs.getString("ViTriLuuTru")
+                        rs.getString("ViTriLuuTru"),
+                        rs.getString("HinhAnh")
                 ));
             }
             tbvBook.setItems(dataSach);
@@ -448,7 +483,8 @@ public class ManageBookView {
                     rs.getInt("SoLuong"),
                     rs.getString("NgonNgu"),
                     rs.getString("TinhTrang"),
-                    rs.getString("ViTriLuuTru")           
+                    rs.getString("ViTriLuuTru"),
+                    rs.getString("HinhAnh")
                 );
                 lstSearch.add(book);
             }

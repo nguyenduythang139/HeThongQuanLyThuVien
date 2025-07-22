@@ -21,8 +21,9 @@ public class Book {
     private StringProperty state;
     private StringProperty location;
     private BooleanProperty selected;
+    private StringProperty image;
 
-    public Book(int id, String name, String author, String publisher,String category, Date publicDate, int quantity, String language, String state, String location) {
+    public Book(int id, String name, String author, String publisher,String category, Date publicDate, int quantity, String language, String state, String location, String image) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
         this.author = new SimpleStringProperty(author);
@@ -33,6 +34,8 @@ public class Book {
         this.language = new SimpleStringProperty(language);
         this.state = new SimpleStringProperty(state);
         this.location = new SimpleStringProperty(location);
+        this.image = new SimpleStringProperty(image);
+        
     }
     
     public Book(int id, String name) {
@@ -74,4 +77,7 @@ public class Book {
     public boolean isSelected() { return selected.get(); }
     public void setSelected(boolean selected) { this.selected.set(selected); }
     public BooleanProperty selectedProperty() { return selected; }
+    
+    public String getImage() { return this.image.get(); }
+    public void setId(String image) { this.image.set(image); }
 }
