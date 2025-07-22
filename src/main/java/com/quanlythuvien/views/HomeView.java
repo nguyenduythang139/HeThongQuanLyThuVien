@@ -1,5 +1,6 @@
 package com.quanlythuvien.views;
 
+
 import com.quanlythuvien.models.CurrentAccount;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,10 +14,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import com.quanlythuvien.utils.menuBarComponent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import com.quanlythuvien.models.Statistical;
 
 public class HomeView{
     private static CurrentAccount currentAccount = new CurrentAccount();
@@ -25,20 +26,22 @@ public class HomeView{
         VBox menuBar = menuBarComponent.createMenuBar(stage);
 
         // Thẻ thống kê
-        VBox card1 = createHeaderCard("📚", "Tổng số sách", "1234");
-        VBox card2 = createHeaderCard("👥", "Độc giả đã đăng ký", "567");
-        VBox card3 = createHeaderCard("📅", "Lượt mượn hôm nay", "66");
-        VBox card4 = createHeaderCard("📄", "Phiếu mượn đang hoạt động", "120");
-        VBox card5 = createHeaderCard("📕", "Sách đang mượn", "320");
-        VBox card6 = createHeaderCard("⏰", "Sách quá hạn", "15");
-
-        HBox cardRow1 = new HBox(15, card1, card2, card3);
-        HBox cardRow2 = new HBox(15, card4, card5, card6);
-        cardRow1.setAlignment(Pos.CENTER);
-        cardRow2.setAlignment(Pos.CENTER);
-
-        VBox cardsSection = new VBox(15, cardRow1, cardRow2);
-        cardsSection.setPadding(new Insets(30, 10, 20, 10));
+        String tongSoSach = String.valueOf(Statistical.tkSach());
+        String docGiaDaDK = String.valueOf(Statistical.tkDocGia());
+        String luotMuonHN = String.valueOf(Statistical.tkLuotMuonHomNay());
+        String phieuMuonDHD = String.valueOf(Statistical.tkPhieuMuonDangHD());
+        String sachDangMuon = String.valueOf(Statistical.tkSachDangMuon());
+        String sachQuaHan = String.valueOf(Statistical.tkSachQuaHan());
+        
+        VBox card1 = createHeaderCard("📚", "Tổng số sách", tongSoSach);
+        VBox card2 = createHeaderCard("👥", "Độc giả đã đăng ký", docGiaDaDK);
+        VBox card3 = createHeaderCard("📅", "Lượt mượn hôm nay", luotMuonHN);
+        VBox card4 = createHeaderCard("📄", "Phiếu mượn đang hoạt động", phieuMuonDHD);
+        VBox card5 = createHeaderCard("📕", "Sách đang mượn", sachDangMuon);
+        VBox card6 = createHeaderCard("⏰", "Sách quá hạn", sachQuaHan);
+        
+        HBox cardsSection = new HBox(20, card1, card2, card3, card4, card5, card6);
+        cardsSection.setAlignment(Pos.CENTER);
 
         // Lời chào và thời gian
         Label welcome = new Label();
@@ -48,22 +51,102 @@ public class HomeView{
         else{
             welcome.setText("👋 Xin chào, thủ thư " + currentAccount.getUserName());
         }
-        welcome.setFont(Font.font(16));
+        welcome.setFont(Font.font(24));
         welcome.setTextFill(Color.web("#2C3E50"));
         Label time = new Label("📆 Hôm nay: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        time.setFont(Font.font(14));
+        time.setFont(Font.font(24));
         time.setTextFill(Color.GRAY);
-        VBox greeting = new VBox(5, welcome, time);
+        VBox greeting = new VBox(10, welcome, time);
         greeting.setAlignment(Pos.CENTER_LEFT);
-        greeting.setPadding(new Insets(0, 0, 10, 30));
+        greeting.setPadding(new Insets(0,0,0,30));
         
-        /*ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/images/homepage_image.png")));
-        imageView.setFitWidth(400);
-        imageView.setFitHeight(300);*/
-
-        VBox mainContent = new VBox(greeting, cardsSection);
+        
+        //list sach
+        HBox listsach1 = new HBox(50);
+        ImageView sach1 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_nhungtamlongcaoca.jpg")));
+        sach1.setFitWidth(160);
+        sach1.setFitHeight(240);
+        
+        ImageView sach2 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_tuoitredanggia.jpg")));
+        sach2.setFitWidth(165);
+        sach2.setFitHeight(240);
+        
+        ImageView sach3 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_demen.jpg")));
+        sach3.setFitWidth(165);
+        sach3.setFitHeight(240);
+        
+        ImageView sach4 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_dieubimat.jpg")));
+        sach4.setFitWidth(165);
+        sach4.setFitHeight(240);
+        
+        ImageView sach5 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_dongian.jpg")));
+        sach5.setFitWidth(165);
+        sach5.setFitHeight(240);
+        
+        ImageView sach6 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_hoangtube.jpg")));
+        sach6.setFitWidth(165);
+        sach6.setFitHeight(240);
+        
+        listsach1.setAlignment(Pos.CENTER);
+        listsach1.getChildren().addAll(sach1, sach2, sach3, sach4, sach5, sach6);
+        
+        //listsach 2
+        HBox listsach2 = new HBox(50);
+        ImageView sach7 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_medieuky.jpg")));
+        sach7.setFitWidth(160);
+        sach7.setFitHeight(240);
+        
+        ImageView sach8 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_ngoinha.jpg")));
+        sach8.setFitWidth(165);
+        sach8.setFitHeight(240);
+        
+        ImageView sach9 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_songbungno.jpg")));
+        sach9.setFitWidth(165);
+        sach9.setFitHeight(240);
+        
+        ImageView sach10 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_sonnam.jpg")));
+        sach10.setFitWidth(165);
+        sach10.setFitHeight(240);
+        
+        ImageView sach11 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_timbinhyentronggiadinh.png")));
+        sach11.setFitWidth(165);
+        sach11.setFitHeight(240);
+        
+        ImageView sach12 = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/sach_tuduy.jpg")));
+        sach12.setFitWidth(165);
+        sach12.setFitHeight(240);
+        
+        listsach2.setAlignment(Pos.CENTER);
+        listsach2.getChildren().addAll(sach7, sach8, sach9, sach10, sach11, sach12);
+        
+        Label deco1 = new Label("GỢI Ý HÔM NAY");
+        deco1.setFont(Font.font(28));
+        
+        Label deco2 = new Label("SÁCH ĐƯỢC YÊU THÍCH GẦN ĐÂY");
+        deco2.setFont(Font.font(28));
+        
+        ImageView imageView = new ImageView(new Image(getClass()
+                .getResourceAsStream("/Images/library1.jpg")));
+        imageView.setFitWidth(1245);
+        imageView.setFitHeight(550);
+       
+        VBox mainContent = new VBox(greeting, cardsSection, imageView, deco1, listsach1, deco2, listsach2);
+        mainContent.setAlignment(Pos.CENTER);
         mainContent.setStyle("-fx-background-color: white;");
         mainContent.setPadding(new Insets(20));
+        mainContent.setSpacing(20);
 
         ScrollPane scrollPane = new ScrollPane(mainContent);
         scrollPane.setFitToWidth(true);
@@ -81,6 +164,7 @@ public class HomeView{
         stage.setTitle("Trang chủ - Hệ thống Quản lý Thư viện");
         stage.show();
     }
+    
 
     private VBox createHeaderCard(String icon, String label, String value) {
         Label iconLabel = new Label(icon);
@@ -93,7 +177,7 @@ public class HomeView{
         quantity.setTextFill(Color.WHITE);
         VBox card = new VBox(5, iconLabel, title, quantity);
         card.setAlignment(Pos.CENTER);
-        card.setPrefSize(180, 80);
+        card.setPrefSize(190, 100);
         card.setStyle("-fx-background-color: #00927A;-fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #E6F4EC;");
         card.setPadding(new Insets(10));
         return card;
