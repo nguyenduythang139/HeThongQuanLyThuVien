@@ -1,3 +1,6 @@
+DROP DATABASE IF EXISTS thuvien;
+CREATE DATABASE thuvien;
+USE thuvien;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: thuvien
@@ -101,7 +104,7 @@ CREATE TABLE `phieumuon` (
 
 LOCK TABLES `phieumuon` WRITE;
 /*!40000 ALTER TABLE `phieumuon` DISABLE KEYS */;
-INSERT INTO `phieumuon` VALUES (1,1,'2025-07-20','2025-07-22',NULL,'Đang mượn','abc'),(2,3,'2025-07-20','2025-07-23',NULL,'Đang mượn','abc');
+INSERT INTO `phieumuon` VALUES (1,1,'2025-07-20','2025-07-22','2025-07-20','Đã trả','abc'),(2,3,'2025-07-20','2025-07-23',NULL,'Đang mượn','abc');
 /*!40000 ALTER TABLE `phieumuon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,10 +124,11 @@ CREATE TABLE `phieuphat` (
   `SoSachHong` int DEFAULT '0',
   `TienPhatHong` int DEFAULT '0',
   `TongTienPhat` int DEFAULT '0',
+  `TrangThai` enum('Đã đóng','Chưa đóng') DEFAULT 'Chưa đóng',
   PRIMARY KEY (`MaPhieuPhat`),
   KEY `MaPhieuMuon` (`MaPhieuMuon`),
   CONSTRAINT `phieuphat_ibfk_1` FOREIGN KEY (`MaPhieuMuon`) REFERENCES `phieumuon` (`MaPhieuMuon`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,6 +137,7 @@ CREATE TABLE `phieuphat` (
 
 LOCK TABLES `phieuphat` WRITE;
 /*!40000 ALTER TABLE `phieuphat` DISABLE KEYS */;
+INSERT INTO `phieuphat` VALUES (1,1,'2025-07-20 00:00:00',0,0,1,50000,50000,'Đã đóng');
 /*!40000 ALTER TABLE `phieuphat` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,7 +170,7 @@ CREATE TABLE `sach` (
 
 LOCK TABLES `sach` WRITE;
 /*!40000 ALTER TABLE `sach` DISABLE KEYS */;
-INSERT INTO `sach` VALUES (2,'abcd','abc','abc','Giao Trinh','2025-07-10',-1,'Tieng Viet','Còn','1',NULL),(3,'sách 2','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(4,'sách 3','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(5,'sách 4','abc','abc','Giao Trinh','2025-07-10',1,'Tieng Viet','Còn','1',NULL);
+INSERT INTO `sach` VALUES (2,'abcd','abc','abc','Giao Trinh','2025-07-10',3,'Tieng Viet','Còn','1',NULL),(3,'sách 2','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(4,'sách 3','abc','abc','Giao Trinh','2025-07-10',0,'Tieng Viet','Còn','1',NULL),(5,'sách 4','abc','abc','Giao Trinh','2025-07-10',1,'Tieng Viet','Còn','1',NULL);
 /*!40000 ALTER TABLE `sach` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,4 +214,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-20 17:31:12
+-- Dump completed on 2025-07-22 11:54:50
