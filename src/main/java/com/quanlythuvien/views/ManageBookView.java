@@ -283,8 +283,7 @@ public class ManageBookView {
         tfSearch.setOnAction(t -> searchBook());
 
         VBox tableBox = new VBox(10, tfSearch, tbvBook);
-        tableBox.setPrefWidth(1000);
-        tableBox.setPadding(new Insets(20,0,20,20));
+        tableBox.setPadding(new Insets(20));
 
         
         // Layout chinh
@@ -338,6 +337,7 @@ public class ManageBookView {
                     thongbao.show();
                     dataSach.clear();
                     loadDataSach();
+                    Reset();
                 }
                 else{
                     thongbao.setContentText("Cập nhật thất bại, kiểm tra lại");
@@ -368,6 +368,7 @@ public class ManageBookView {
                     thongbao.show();
                     dataSach.clear();
                     loadDataSach();
+                    Reset();
                 }
                 else{
                     thongbao.setContentText("Xóa thất bại, kiểm tra lại");
@@ -420,6 +421,7 @@ public class ManageBookView {
                     thongbao.show();
                     dataSach.clear();
                     loadDataSach();
+                    Reset();
                 }
                 else{
                     thongbao.setContentText("Thêm thất bại, kiểm tra lại");

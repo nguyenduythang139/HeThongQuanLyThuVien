@@ -249,7 +249,6 @@ public class ManageReaderView {
         layout.setSpacing(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(tfSearch, tvdocgia);
-        HBox.setHgrow(layout, Priority.ALWAYS);
         return layout;
     }
     
@@ -303,6 +302,7 @@ public class ManageReaderView {
                     thongbao.show();
                     dataDocGia.clear();
                     loadDataDocGia();
+                    ResetDG();
                 }
                 else{
                     thongbao.setContentText("Thêm độc giả thất bại!");
@@ -331,6 +331,7 @@ public class ManageReaderView {
                     thongbao.show();
                     dataDocGia.clear();
                     loadDataDocGia();
+                    ResetDG();
                 }
                 else{
                     thongbao.setContentText("Xóa độc giả thất bại!");
@@ -368,6 +369,7 @@ public class ManageReaderView {
                     thongbao.show();
                     dataDocGia.clear();
                     loadDataDocGia();
+                    ResetDG();
                 }
                 else{
                     thongbao.setContentText("Cập nhật thông tin độc giả thất bại!");

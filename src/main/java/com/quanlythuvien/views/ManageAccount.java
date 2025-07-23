@@ -292,6 +292,7 @@ public class ManageAccount {
                     alert.setContentText("Thêm thành công!");
                     alert.show();
                     loadDataAccount();
+                    resetForm();
                 }
                 else{
                     alert.setContentText("Thêm thất bại!");
@@ -327,6 +328,7 @@ public class ManageAccount {
                     alert.setContentText("Cập nhật thành công!");
                     alert.show();
                     loadDataAccount();
+                    resetForm();
                 }
                 else{
                     alert.setContentText("Cập nhật thất bại!");
@@ -355,6 +357,7 @@ public class ManageAccount {
                     alert.setContentText("Xóa thành công!");
                     alert.show();
                     loadDataAccount();
+                    resetForm();
                 }
                 else{
                     alert.setContentText("Xóa thất bại!");

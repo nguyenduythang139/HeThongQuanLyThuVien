@@ -40,8 +40,10 @@ public class HomeView{
         VBox card5 = createHeaderCard("📕", "Sách đang mượn", sachDangMuon);
         VBox card6 = createHeaderCard("⏰", "Sách quá hạn", sachQuaHan);
         
-        HBox cardsSection = new HBox(20, card1, card2, card3, card4, card5, card6);
-        cardsSection.setAlignment(Pos.CENTER);
+        HBox cardsSection1 = new HBox(20, card1, card2, card3);
+        HBox cardsSection2 = new HBox(20, card4, card5, card6);
+        cardsSection1.setAlignment(Pos.CENTER);
+        cardsSection2.setAlignment(Pos.CENTER);
 
         // Lời chào và thời gian
         Label welcome = new Label();
@@ -51,11 +53,9 @@ public class HomeView{
         else{
             welcome.setText("👋 Xin chào, thủ thư " + currentAccount.getUserName());
         }
-        welcome.setFont(Font.font(24));
-        welcome.setTextFill(Color.web("#2C3E50"));
+        welcome.setStyle("-fx-font-size: 20; -fx-text-fill: #2C3E50");
         Label time = new Label("📆 Hôm nay: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        time.setFont(Font.font(24));
-        time.setTextFill(Color.GRAY);
+        time.setStyle("-fx-font-size: 20; -fx-text-fill: grey");
         VBox greeting = new VBox(10, welcome, time);
         greeting.setAlignment(Pos.CENTER_LEFT);
         greeting.setPadding(new Insets(0,0,0,30));
@@ -65,33 +65,33 @@ public class HomeView{
         HBox listsach1 = new HBox(50);
         ImageView sach1 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_nhungtamlongcaoca.jpg")));
-        sach1.setFitWidth(160);
-        sach1.setFitHeight(240);
+        sach1.setFitWidth(120);
+        sach1.setFitHeight(200);
         
         ImageView sach2 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_tuoitredanggia.jpg")));
-        sach2.setFitWidth(165);
-        sach2.setFitHeight(240);
+        sach2.setFitWidth(120);
+        sach2.setFitHeight(200);
         
         ImageView sach3 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_demen.jpg")));
-        sach3.setFitWidth(165);
-        sach3.setFitHeight(240);
+        sach3.setFitWidth(120);
+        sach3.setFitHeight(200);
         
         ImageView sach4 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_dieubimat.jpg")));
-        sach4.setFitWidth(165);
-        sach4.setFitHeight(240);
+        sach4.setFitWidth(120);
+        sach4.setFitHeight(200);
         
         ImageView sach5 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_dongian.jpg")));
-        sach5.setFitWidth(165);
-        sach5.setFitHeight(240);
+        sach5.setFitWidth(120);
+        sach5.setFitHeight(200);
         
         ImageView sach6 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_hoangtube.jpg")));
-        sach6.setFitWidth(165);
-        sach6.setFitHeight(240);
+        sach6.setFitWidth(120);
+        sach6.setFitHeight(200);
         
         listsach1.setAlignment(Pos.CENTER);
         listsach1.getChildren().addAll(sach1, sach2, sach3, sach4, sach5, sach6);
@@ -100,49 +100,49 @@ public class HomeView{
         HBox listsach2 = new HBox(50);
         ImageView sach7 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_medieuky.jpg")));
-        sach7.setFitWidth(160);
-        sach7.setFitHeight(240);
+        sach7.setFitWidth(120);
+        sach7.setFitHeight(200);
         
         ImageView sach8 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_ngoinha.jpg")));
-        sach8.setFitWidth(165);
-        sach8.setFitHeight(240);
+        sach8.setFitWidth(120);
+        sach8.setFitHeight(200);
         
         ImageView sach9 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_songbungno.jpg")));
-        sach9.setFitWidth(165);
-        sach9.setFitHeight(240);
+        sach9.setFitWidth(120);
+        sach9.setFitHeight(200);
         
         ImageView sach10 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_sonnam.jpg")));
-        sach10.setFitWidth(165);
-        sach10.setFitHeight(240);
+        sach10.setFitWidth(120);
+        sach10.setFitHeight(200);
         
         ImageView sach11 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_timbinhyentronggiadinh.png")));
-        sach11.setFitWidth(165);
-        sach11.setFitHeight(240);
+        sach11.setFitWidth(120);
+        sach11.setFitHeight(200);
         
         ImageView sach12 = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/sach_tuduy.jpg")));
-        sach12.setFitWidth(165);
-        sach12.setFitHeight(240);
+        sach12.setFitWidth(120);
+        sach12.setFitHeight(200);
         
         listsach2.setAlignment(Pos.CENTER);
         listsach2.getChildren().addAll(sach7, sach8, sach9, sach10, sach11, sach12);
         
         Label deco1 = new Label("GỢI Ý HÔM NAY");
-        deco1.setFont(Font.font(28));
+        deco1.setStyle("-fx-font-size: 22");
         
         Label deco2 = new Label("SÁCH ĐƯỢC YÊU THÍCH GẦN ĐÂY");
-        deco2.setFont(Font.font(28));
+        deco2.setStyle("-fx-font-size: 22");
         
         ImageView imageView = new ImageView(new Image(getClass()
                 .getResourceAsStream("/Images/library1.jpg")));
-        imageView.setFitWidth(1245);
+        imageView.setFitWidth(1000);
         imageView.setFitHeight(550);
        
-        VBox mainContent = new VBox(greeting, cardsSection, imageView, deco1, listsach1, deco2, listsach2);
+        VBox mainContent = new VBox(greeting, cardsSection1, cardsSection2, imageView, deco1, listsach1, deco2, listsach2);
         mainContent.setAlignment(Pos.CENTER);
         mainContent.setStyle("-fx-background-color: white;");
         mainContent.setPadding(new Insets(20));

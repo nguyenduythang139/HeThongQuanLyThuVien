@@ -110,26 +110,39 @@ public class ManageBorrowReturnView {
                     break;
                 }
             }
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Tạo phiếu mượn");
+            
             if (cbReaderId.getValue() == null || dpBorrowDate.getValue() == null 
                     || dpReturnDate.getValue() == null || selectedBookIsEmpty == true)
             {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Tạo phiếu mượn");
                 alert.setContentText("Vui lòng nhập đủ các trường thông tin!");
                 alert.show();
                 return;
             }
+            LocalDate toDay = LocalDate.now();
             LocalDate borrowDate = dpBorrowDate.getValue();
             LocalDate returnDate = dpReturnDate.getValue();
+            if (borrowDate.isBefore(toDay)){
+                alert.setContentText("Vui lòng chọn ngày mượn là hôm nay!");
+                alert.show();
+                return;
+            }
             if (returnDate.isBefore(borrowDate)){
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Tạo phiếu mượn");
                 alert.setContentText("Vui lòng chọn hạn trả sau ngày mượn!");
+                alert.show();
+                return;
+            }
+            if (returnDate.isAfter(borrowDate.plusDays(7))){
+                alert.setContentText("Vui lòng chọn hạn trả không quá 7 ngày!");
                 alert.show();
                 return;
             }
             createBorrowTicket();
         });
+        
+        btnReset.setOnAction(t -> resetForm());
 
         HBox buttonBox = new HBox(20, btnCreate, btnReturn, btnReset);
         buttonBox.setAlignment(Pos.CENTER);
@@ -205,15 +218,13 @@ public class ManageBorrowReturnView {
         tbvBorrowTicket.getColumns().addAll(colTicketId, colReaderId, colBorrowDate, colReturnDate, colActualReturn, colStatus, colNote);
         loadDataBorrowTicket();
         
-        Button btnViewDetail = new Button("Xem Chi Tiết");
-        
         // Thanh tim kiem
         tfSearch = new TextField();
         tfSearch.setPromptText("🔍 Tìm kiếm theo ma phieu muon");
         tfSearch.setPrefWidth(300);
         tfSearch.setOnAction(t -> searchBorrowTicket());
 
-        VBox tableBox = new VBox(10, tfSearch, tbvBorrowTicket, btnViewDetail);
+        VBox tableBox = new VBox(10, tfSearch, tbvBorrowTicket);
         tableBox.setPadding(new Insets(20));
         HBox.setHgrow(tableBox, Priority.ALWAYS);
 
@@ -338,6 +349,14 @@ public class ManageBorrowReturnView {
         }
     }
     
+    private static void resetForm(){
+        cbReaderId.setValue(null);
+        dpBorrowDate.setValue(null);
+        dpReturnDate.setValue(null);
+        taTakeNote.clear();
+    }
+    
+    
     private static void createBorrowTicket(){
         List<Book> lstBookSelected = new ArrayList<>();
         for (Book b : lstBook){
@@ -378,7 +397,7 @@ public class ManageBorrowReturnView {
                     psUQ.setInt(1, b.getId());
                     psUQ.executeUpdate();
                 }
-                loadDataBorrowTicket();              
+                loadDataBorrowTicket();  
                 alert.setContentText("Tạo phiếu mươn thành công!");
                 alert.show();
             }
@@ -474,6 +493,7 @@ public class ManageBorrowReturnView {
                         alert.setContentText("Trả sách thành công!");
                         alert.show();
                         loadDataBorrowTicket();
+                        mainContent.getChildren().set(0, formBox);
                     }
                     else{
                         alert.setContentText("Trả sách thất bại!");
@@ -486,6 +506,7 @@ public class ManageBorrowReturnView {
                 alert.show();
             }
         });
+        
         btnCancel.setOnAction(t -> {
             mainContent.getChildren().set(0, formBox);
         });
